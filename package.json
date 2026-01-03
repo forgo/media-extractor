@@ -1,0 +1,89 @@
+{
+  "name": "@forgo/media-extractor",
+  "version": "1.0.0",
+  "description": "Zero-dependency TypeScript library for extracting, detecting, and validating media from URLs, HTML, DOM, clipboard, and drag & drop events",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./detectors": {
+      "types": "./dist/detectors/index.d.ts",
+      "import": "./dist/detectors/index.js"
+    },
+    "./parsers": {
+      "types": "./dist/parsers/index.d.ts",
+      "import": "./dist/parsers/index.js"
+    },
+    "./security": {
+      "types": "./dist/security/index.d.ts",
+      "import": "./dist/security/index.js"
+    },
+    "./filters": {
+      "types": "./dist/filters/index.d.ts",
+      "import": "./dist/filters/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run test:run && npm run build"
+  },
+  "keywords": [
+    "media",
+    "image",
+    "video",
+    "audio",
+    "extraction",
+    "clipboard",
+    "drag-drop",
+    "url",
+    "html",
+    "dom",
+    "security",
+    "validation",
+    "typescript",
+    "zero-dependency"
+  ],
+  "author": "Elliott Richerson",
+  "license": "MIT",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forgo/media-extractor"
+  },
+  "bugs": {
+    "url": "https://github.com/forgo/media-extractor/issues"
+  },
+  "homepage": "https://github.com/forgo/media-extractor#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "jsdom": "^27.0.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
