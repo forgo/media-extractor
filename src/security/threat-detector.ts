@@ -272,10 +272,7 @@ export function detectScriptInjection(url: string): ThreatInfo | null {
 /**
  * Detect if dimensions suggest a tracking pixel
  */
-export function detectTrackingPixel(
-  url: string,
-  dimensions?: MediaDimensions
-): ThreatInfo | null {
+export function detectTrackingPixel(url: string, dimensions?: MediaDimensions): ThreatInfo | null {
   // Check dimensions
   if (dimensions) {
     const { width, height } = dimensions;
@@ -404,10 +401,7 @@ export function detectDataExfiltration(url: string): ThreatInfo | null {
 /**
  * Detect suspicious TLD
  */
-export function detectSuspiciousTld(
-  url: string,
-  additionalTlds?: string[]
-): ThreatInfo | null {
+export function detectSuspiciousTld(url: string, additionalTlds?: string[]): ThreatInfo | null {
   if (isSuspiciousTld(url, additionalTlds)) {
     const tld = extractTld(url);
     return {

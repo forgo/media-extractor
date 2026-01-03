@@ -1,0 +1,137 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0, 1.0.0-alpha.1, 1.0.0-beta.1, 1.0.0-rc.1)'
+        required: true
+        type: string
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - official
+          - alpha
+          - beta
+          - rc
+        default: official
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  validate-version:
+    name: Validate Version
+    runs-on: ubuntu-latest
+    outputs:
+      npm_tag: ${{ steps.determine-tag.outputs.tag }}
+      is_prerelease: ${{ steps.determine-tag.outputs.is_prerelease }}
+    steps:
+      - name: Validate version format
+        run: |
+          VERSION="${{ inputs.version }}"
+
+          # Check semantic version format
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z]+\.[0-9]+)?$'; then
+            echo "Error: Invalid version format. Expected: X.Y.Z or X.Y.Z-prerelease.N"
+            exit 1
+          fi
+
+          # Validate version matches release type
+          case "${{ inputs.release_type }}" in
+            official)
+              if echo "$VERSION" | grep -qE '-'; then
+                echo "Error: Official releases cannot have prerelease tags"
+                exit 1
+              fi
+              ;;
+            alpha)
+              if ! echo "$VERSION" | grep -qE '-alpha\.[0-9]+$'; then
+                echo "Error: Alpha releases must have -alpha.N suffix"
+                exit 1
+              fi
+              ;;
+            beta)
+              if ! echo "$VERSION" | grep -qE '-beta\.[0-9]+$'; then
+                echo "Error: Beta releases must have -beta.N suffix"
+                exit 1
+              fi
+              ;;
+            rc)
+              if ! echo "$VERSION" | grep -qE '-rc\.[0-9]+$'; then
+                echo "Error: RC releases must have -rc.N suffix"
+                exit 1
+              fi
+              ;;
+          esac
+
+          echo "Version $VERSION validated for ${{ inputs.release_type }} release"
+
+      - name: Determine npm tag
+        id: determine-tag
+        run: |
+          case "${{ inputs.release_type }}" in
+            official)
+              echo "tag=latest" >> $GITHUB_OUTPUT
+              echo "is_prerelease=false" >> $GITHUB_OUTPUT
+              ;;
+            alpha)
+              echo "tag=alpha" >> $GITHUB_OUTPUT
+              echo "is_prerelease=true" >> $GITHUB_OUTPUT
+              ;;
+            beta)
+              echo "tag=beta" >> $GITHUB_OUTPUT
+              echo "is_prerelease=true" >> $GITHUB_OUTPUT
+              ;;
+            rc)
+              echo "tag=rc" >> $GITHUB_OUTPUT
+              echo "is_prerelease=true" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  ci-and-publish:
+    name: CI and Publish
+    needs: validate-version
+    uses: ./.github/workflows/media-extractor.yml
+    with:
+      publish: true
+      version: ${{ inputs.version }}
+      tag: ${{ needs.validate-version.outputs.npm_tag }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate-version, ci-and-publish]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: v${{ inputs.version }}
+          prerelease: ${{ needs.validate-version.outputs.is_prerelease == 'true' }}
+          generate_release_notes: true
+          body: |
+            ## Installation
+
+            ```bash
+            pnpm add @forgo/media-extractor@${{ inputs.version }}
+            ```
+
+            ## npm
+
+            https://www.npmjs.com/package/@forgo/media-extractor/v/${{ inputs.version }}

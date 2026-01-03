@@ -14,10 +14,10 @@ const _AUDIO_EXTENSIONS = new Set(getSupportedAudioExtensions());
 void _AUDIO_EXTENSIONS; // Preserve for future use
 
 /** Known audio/podcast hosting platforms */
-const AUDIO_PLATFORMS: Array<{
+const AUDIO_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^(www\.)?spotify\.com$/i,
     patterns: [/\/track\//, /\/episode\//, /\/album\//],
@@ -58,7 +58,14 @@ const AUDIO_CDN_PATTERNS = [
 ];
 
 /** Streaming audio patterns (podcasts, internet radio) */
-const STREAMING_AUDIO_PATTERNS = [/\.pls$/i, /\.asx$/i, /\/stream\//i, /\/listen\//i, /icecast/i, /shoutcast/i];
+const STREAMING_AUDIO_PATTERNS = [
+  /\.pls$/i,
+  /\.asx$/i,
+  /\/stream\//i,
+  /\/listen\//i,
+  /icecast/i,
+  /shoutcast/i,
+];
 
 /**
  * Check if a URL has an audio file extension
@@ -187,7 +194,7 @@ export function detectAudio(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isAudioUrl(url: string, threshold: number = 0.5): boolean {
+export function isAudioUrl(url: string, threshold = 0.5): boolean {
   return detectAudio(url) >= threshold;
 }
 

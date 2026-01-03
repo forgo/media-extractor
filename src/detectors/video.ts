@@ -17,10 +17,10 @@ void _VIDEO_EXTENSIONS; // Preserve for future use
 const STREAMING_EXTENSIONS = new Set(['m3u8', 'm3u', 'mpd']);
 
 /** Known video hosting platforms */
-const VIDEO_PLATFORMS: Array<{
+const VIDEO_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^(www\.)?youtube\.com$/i,
     patterns: [/\/watch\?/, /\/embed\//, /\/v\//],
@@ -163,19 +163,19 @@ export function extractVideoId(url: string): string | null {
     if (videoId) return videoId;
 
     // Embed URL: /embed/VIDEO_ID
-    const embedMatch = parsed.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/);
+    const embedMatch = /\/embed\/([a-zA-Z0-9_-]+)/.exec(parsed.pathname);
     if (embedMatch?.[1]) return embedMatch[1];
   }
 
   if (/youtu\.be$/i.test(domain)) {
     // Short URL: /VIDEO_ID
-    const match = parsed.pathname.match(/^\/([a-zA-Z0-9_-]+)/);
+    const match = /^\/([a-zA-Z0-9_-]+)/.exec(parsed.pathname);
     if (match?.[1]) return match[1];
   }
 
   // Vimeo
   if (/vimeo\.com$/i.test(domain)) {
-    const match = parsed.pathname.match(/\/(\d+)/);
+    const match = /\/(\d+)/.exec(parsed.pathname);
     if (match?.[1]) return match[1];
   }
 
@@ -233,7 +233,7 @@ export function detectVideo(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isVideoUrl(url: string, threshold: number = 0.5): boolean {
+export function isVideoUrl(url: string, threshold = 0.5): boolean {
   return detectVideo(url) >= threshold;
 }
 

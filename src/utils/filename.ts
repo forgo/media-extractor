@@ -115,7 +115,7 @@ export function extractExtension(url: string): string {
 export function extractExtensionFromDataUrl(url: string): string {
   if (!isDataUrl(url)) return '';
 
-  const match = url.match(/^data:([^;,]+)/);
+  const match = /^data:([^;,]+)/.exec(url);
   if (!match?.[1]) return '';
 
   const mimeType = match[1].toLowerCase();
@@ -198,7 +198,7 @@ const WINDOWS_RESERVED_NAMES = new Set([
  * - Limits length
  * - Prevents path traversal
  */
-export function sanitizeFilename(filename: string, maxLength: number = 200): string {
+export function sanitizeFilename(filename: string, maxLength = 200): string {
   if (!filename || typeof filename !== 'string') return 'file';
 
   let sanitized = filename
@@ -230,11 +230,7 @@ export function sanitizeFilename(filename: string, maxLength: number = 200): str
 /**
  * Sanitize a full filename including extension
  */
-export function sanitizeFullFilename(
-  filename: string,
-  extension: string,
-  maxLength: number = 200
-): string {
+export function sanitizeFullFilename(filename: string, extension: string, maxLength = 200): string {
   const sanitizedName = sanitizeFilename(filename, maxLength - extension.length - 1);
   const sanitizedExt = extension.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
@@ -297,13 +293,15 @@ export function makeUnique(
 
   // Fallback with timestamp
   const timestamp = Date.now();
-  return sanitizedExt ? `${sanitizedName}_${timestamp}.${sanitizedExt}` : `${sanitizedName}_${timestamp}`;
+  return sanitizedExt
+    ? `${sanitizedName}_${timestamp}.${sanitizedExt}`
+    : `${sanitizedName}_${timestamp}`;
 }
 
 /**
  * Generate a filename from a URL with proper extension
  */
-export function generateFilename(url: string, defaultName: string = 'file'): string {
+export function generateFilename(url: string, defaultName = 'file'): string {
   const { filename, extension } = extractFilenameAndExtension(url);
 
   const name = filename || defaultName;
@@ -325,7 +323,7 @@ export function generateFilename(url: string, defaultName: string = 'file'): str
 export function normalizeExtension(extension: string): string {
   if (!extension) return '';
 
-  let normalized = extension.toLowerCase().replace(/^\.+/, '');
+  const normalized = extension.toLowerCase().replace(/^\.+/, '');
 
   // Handle common aliases
   const aliases: Record<string, string> = {
@@ -390,17 +388,7 @@ export function isVideoExtension(extension: string): boolean {
  * Check if an extension represents an audio format
  */
 export function isAudioExtension(extension: string): boolean {
-  const audioExts = new Set([
-    'mp3',
-    'wav',
-    'ogg',
-    'flac',
-    'aac',
-    'm4a',
-    'wma',
-    'aiff',
-    'opus',
-  ]);
+  const audioExts = new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma', 'aiff', 'opus']);
 
   return audioExts.has(normalizeExtension(extension));
 }

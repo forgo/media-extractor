@@ -14,10 +14,10 @@ const _DOCUMENT_EXTENSIONS = new Set(getSupportedDocumentExtensions());
 void _DOCUMENT_EXTENSIONS; // Preserve for future use
 
 /** Document hosting/viewing platforms */
-const DOCUMENT_PLATFORMS: Array<{
+const DOCUMENT_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^docs\.google\.com$/i,
     patterns: [/\/document\//, /\/spreadsheets\//, /\/presentation\//, /\/viewer/],
@@ -193,7 +193,7 @@ export function detectDocument(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isDocumentUrl(url: string, threshold: number = 0.5): boolean {
+export function isDocumentUrl(url: string, threshold = 0.5): boolean {
   return detectDocument(url) >= threshold;
 }
 

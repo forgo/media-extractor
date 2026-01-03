@@ -201,18 +201,14 @@ export function checkFileSize(
 /**
  * Create a dimension filter from a preset name
  */
-export function createPresetFilter(
-  preset: keyof typeof DIMENSION_PRESETS
-): DimensionFilter {
+export function createPresetFilter(preset: keyof typeof DIMENSION_PRESETS): DimensionFilter {
   return { ...DIMENSION_PRESETS[preset] };
 }
 
 /**
  * Combine multiple dimension filters (uses most restrictive values)
  */
-export function combineDimensionFilters(
-  ...filters: DimensionFilter[]
-): DimensionFilter {
+export function combineDimensionFilters(...filters: DimensionFilter[]): DimensionFilter {
   const combined: DimensionFilter = {};
 
   for (const filter of filters) {
@@ -224,24 +220,15 @@ export function combineDimensionFilters(
       combined.minHeight = Math.max(combined.minHeight ?? 0, filter.minHeight);
     }
     if (filter.minAspectRatio !== undefined) {
-      combined.minAspectRatio = Math.max(
-        combined.minAspectRatio ?? 0,
-        filter.minAspectRatio
-      );
+      combined.minAspectRatio = Math.max(combined.minAspectRatio ?? 0, filter.minAspectRatio);
     }
 
     // Take the smallest maximum values
     if (filter.maxWidth !== undefined) {
-      combined.maxWidth = Math.min(
-        combined.maxWidth ?? Infinity,
-        filter.maxWidth
-      );
+      combined.maxWidth = Math.min(combined.maxWidth ?? Infinity, filter.maxWidth);
     }
     if (filter.maxHeight !== undefined) {
-      combined.maxHeight = Math.min(
-        combined.maxHeight ?? Infinity,
-        filter.maxHeight
-      );
+      combined.maxHeight = Math.min(combined.maxHeight ?? Infinity, filter.maxHeight);
     }
     if (filter.maxAspectRatio !== undefined) {
       combined.maxAspectRatio = Math.min(
@@ -294,8 +281,8 @@ export function sortBySize<TMeta = unknown>(
   order: 'asc' | 'desc' = 'desc'
 ): ExtractedMedia<TMeta>[] {
   return [...items].sort((a, b) => {
-    const pixelsA = a.dimensions ? calculatePixelCount(a.dimensions) ?? 0 : 0;
-    const pixelsB = b.dimensions ? calculatePixelCount(b.dimensions) ?? 0 : 0;
+    const pixelsA = a.dimensions ? (calculatePixelCount(a.dimensions) ?? 0) : 0;
+    const pixelsB = b.dimensions ? (calculatePixelCount(b.dimensions) ?? 0) : 0;
     return order === 'desc' ? pixelsB - pixelsA : pixelsA - pixelsB;
   });
 }
@@ -308,8 +295,8 @@ export function sortByAspectRatio<TMeta = unknown>(
   order: 'asc' | 'desc' = 'desc'
 ): ExtractedMedia<TMeta>[] {
   return [...items].sort((a, b) => {
-    const ratioA = a.dimensions ? calculateAspectRatio(a.dimensions) ?? 0 : 0;
-    const ratioB = b.dimensions ? calculateAspectRatio(b.dimensions) ?? 0 : 0;
+    const ratioA = a.dimensions ? (calculateAspectRatio(a.dimensions) ?? 0) : 0;
+    const ratioB = b.dimensions ? (calculateAspectRatio(b.dimensions) ?? 0) : 0;
     return order === 'desc' ? ratioB - ratioA : ratioA - ratioB;
   });
 }
@@ -325,17 +312,13 @@ export function getLargest<TMeta = unknown>(
   let largest = items[0];
   if (!largest) return null;
 
-  let largestPixels = largest.dimensions
-    ? calculatePixelCount(largest.dimensions) ?? 0
-    : 0;
+  let largestPixels = largest.dimensions ? (calculatePixelCount(largest.dimensions) ?? 0) : 0;
 
   for (let i = 1; i < items.length; i++) {
     const item = items[i];
     if (!item) continue;
 
-    const pixels = item.dimensions
-      ? calculatePixelCount(item.dimensions) ?? 0
-      : 0;
+    const pixels = item.dimensions ? (calculatePixelCount(item.dimensions) ?? 0) : 0;
     if (pixels > largestPixels) {
       largest = item;
       largestPixels = pixels;

@@ -77,7 +77,7 @@ export function detectMediaType(url: string): DetectionResult {
  * @param threshold - Minimum confidence threshold (default: 0.5)
  * @returns The detected MediaType
  */
-export function getMediaType(url: string, threshold: number = 0.5): MediaType {
+export function getMediaType(url: string, threshold = 0.5): MediaType {
   const result = detectMediaType(url);
   return result.confidence >= threshold ? result.type : 'unknown';
 }
@@ -89,7 +89,7 @@ export function getMediaType(url: string, threshold: number = 0.5): MediaType {
  * @param type - The media type to check for
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isMediaType(url: string, type: MediaType, threshold: number = 0.5): boolean {
+export function isMediaType(url: string, type: MediaType, threshold = 0.5): boolean {
   switch (type) {
     case 'image':
       return isImageUrl(url, threshold);
@@ -110,7 +110,7 @@ export function isMediaType(url: string, type: MediaType, threshold: number = 0.
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isSupportedMedia(url: string, threshold: number = 0.5): boolean {
+export function isSupportedMedia(url: string, threshold = 0.5): boolean {
   const result = detectMediaType(url);
   return result.type !== 'unknown' && result.confidence >= threshold;
 }
@@ -123,7 +123,7 @@ export function isSupportedMedia(url: string, threshold: number = 0.5): boolean 
  * @param threshold - Minimum confidence threshold (default: 0.5)
  * @returns URLs that match the specified type
  */
-export function filterByMediaType(urls: string[], type: MediaType, threshold: number = 0.5): string[] {
+export function filterByMediaType(urls: string[], type: MediaType, threshold = 0.5): string[] {
   return urls.filter((url) => isMediaType(url, type, threshold));
 }
 
@@ -134,10 +134,7 @@ export function filterByMediaType(urls: string[], type: MediaType, threshold: nu
  * @param threshold - Minimum confidence threshold (default: 0.5)
  * @returns URLs grouped by media type
  */
-export function groupByMediaType(
-  urls: string[],
-  threshold: number = 0.5
-): Record<MediaType, string[]> {
+export function groupByMediaType(urls: string[], threshold = 0.5): Record<MediaType, string[]> {
   const groups: Record<MediaType, string[]> = {
     image: [],
     video: [],

@@ -12,16 +12,8 @@ export * from './patterns';
 export * from './dedup';
 
 // Import for combined filter
-import {
-  filterByDimensions,
-  checkFileSize,
-  DIMENSION_PRESETS,
-} from './dimensions';
-import {
-  filterByPatterns,
-  type PatternFilterConfig,
-  COMMON_EXCLUDE_PATTERNS,
-} from './patterns';
+import { filterByDimensions, checkFileSize, DIMENSION_PRESETS } from './dimensions';
+import { filterByPatterns, type PatternFilterConfig, COMMON_EXCLUDE_PATTERNS } from './patterns';
 import { deduplicate, type DedupeOptions, type DedupeStrategy } from './dedup';
 
 // =============================================================================
@@ -138,16 +130,12 @@ export function applyFilters<TMeta = unknown>(
 
   // Filter by media type
   if (config.mediaTypes && config.mediaTypes.length > 0) {
-    filtered = filtered.filter((item) =>
-      config.mediaTypes!.includes(item.mediaType)
-    );
+    filtered = filtered.filter((item) => config.mediaTypes!.includes(item.mediaType));
   }
 
   // Filter by security status
   if (config.securityStatuses && config.securityStatuses.length > 0) {
-    filtered = filtered.filter((item) =>
-      config.securityStatuses!.includes(item.security.status)
-    );
+    filtered = filtered.filter((item) => config.securityStatuses!.includes(item.security.status));
   }
 
   // Filter out common unwanted items
@@ -186,8 +174,7 @@ export function applyFilters<TMeta = unknown>(
 
   // Apply deduplication (last step to work on filtered set)
   if (config.dedupe) {
-    const dedupeOptions: DedupeOptions =
-      typeof config.dedupe === 'boolean' ? {} : config.dedupe;
+    const dedupeOptions: DedupeOptions = typeof config.dedupe === 'boolean' ? {} : config.dedupe;
     filtered = deduplicate(filtered, dedupeOptions);
   }
 
@@ -392,7 +379,7 @@ export class FilterBuilder<TMeta = unknown> {
     // Cast to any to work around generic variance issues
     this.config.customFilter = existing
       ? (item) => existing(item) && (fn as (item: ExtractedMedia) => boolean)(item)
-      : fn as (item: ExtractedMedia) => boolean;
+      : (fn as (item: ExtractedMedia) => boolean);
     return this;
   }
 
@@ -437,8 +424,6 @@ export class FilterBuilder<TMeta = unknown> {
 /**
  * Create a filter builder for fluent filtering
  */
-export function filter<TMeta = unknown>(
-  items: ExtractedMedia<TMeta>[]
-): FilterBuilder<TMeta> {
+export function filter<TMeta = unknown>(items: ExtractedMedia<TMeta>[]): FilterBuilder<TMeta> {
   return new FilterBuilder(items);
 }

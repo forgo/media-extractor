@@ -14,7 +14,7 @@ import { sanitizeFilename as baseFileSanitize } from '../utils/filename';
 /**
  * Characters that should be encoded in URLs
  */
-const UNSAFE_URL_CHARS = /[<>"{}|\\^`\[\]]/g;
+const UNSAFE_URL_CHARS = /[<>"{}|\\^`[\]]/g;
 
 /**
  * Control characters that should be removed
@@ -81,7 +81,7 @@ export function sanitizeUrl(
       return null;
     }
     // For allowed data URLs, validate basic structure
-    if (!sanitized.match(/^data:[a-z]+\/[a-z0-9.+-]+[;,]/i)) {
+    if (!/^data:[a-z]+\/[a-z0-9.+-]+[;,]/i.exec(sanitized)) {
       return null;
     }
   }
@@ -95,9 +95,7 @@ export function sanitizeUrl(
   }
 
   // Encode any remaining unsafe characters
-  sanitized = sanitized.replace(UNSAFE_URL_CHARS, (char) =>
-    encodeURIComponent(char)
-  );
+  sanitized = sanitized.replace(UNSAFE_URL_CHARS, (char) => encodeURIComponent(char));
 
   // Optionally strip tracking parameters
   if (stripTracking && !isDataUrl(sanitized)) {
@@ -191,7 +189,9 @@ export function stripTrackingParams(url: string): string {
     });
 
     // Remove tracking params
-    toRemove.forEach((key) => parsed.searchParams.delete(key));
+    toRemove.forEach((key) => {
+      parsed.searchParams.delete(key);
+    });
 
     return parsed.toString();
   } catch {
@@ -240,11 +240,14 @@ export function sanitizeFilename(
   sanitized = sanitized.replace(new RegExp(`${escapedReplacement}+`, 'g'), replacement);
 
   // Trim replacement chars from ends
-  sanitized = sanitized.replace(new RegExp(`^${escapedReplacement}+|${escapedReplacement}+$`, 'g'), '');
+  sanitized = sanitized.replace(
+    new RegExp(`^${escapedReplacement}+|${escapedReplacement}+$`, 'g'),
+    ''
+  );
 
   // Enforce max length (preserve extension if possible)
   if (sanitized.length > maxLength) {
-    const extMatch = sanitized.match(/\.[a-z0-9]{1,10}$/i);
+    const extMatch = /\.[a-z0-9]{1,10}$/i.exec(sanitized);
     if (extMatch) {
       const ext = extMatch[0];
       const nameMaxLen = maxLength - ext.length;
@@ -398,10 +401,7 @@ export function sanitizeHtml(html: string): string {
   );
 
   // Remove data: URLs in src (potential XSS vector)
-  sanitized = sanitized.replace(
-    /src\s*=\s*(['"]?)\s*data:text\/html[^'">\s]*/gi,
-    'src=$1#blocked'
-  );
+  sanitized = sanitized.replace(/src\s*=\s*(['"]?)\s*data:text\/html[^'">\s]*/gi, 'src=$1#blocked');
 
   return sanitized;
 }

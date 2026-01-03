@@ -193,7 +193,7 @@ export function detectImage(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isImageUrl(url: string, threshold: number = 0.5): boolean {
+export function isImageUrl(url: string, threshold = 0.5): boolean {
   return detectImage(url) >= threshold;
 }
 
@@ -219,7 +219,7 @@ export function isTrackingPixelSize(width: number | null, height: number | null)
 export function isUiElementSize(
   width: number | null,
   height: number | null,
-  maxDimension: number = 32
+  maxDimension = 32
 ): boolean {
   if (width === null || height === null) return false;
   return width <= maxDimension && height <= maxDimension;

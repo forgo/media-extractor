@@ -365,18 +365,18 @@ export const SEVERITY_WEIGHTS: Record<ThreatSeverity, number> = {
 /** Default severity for each threat type */
 export const DEFAULT_THREAT_SEVERITY: Partial<Record<ThreatType, ThreatSeverity>> = {
   'known-malware': 'critical',
-  'phishing': 'critical',
+  phishing: 'critical',
   'script-injection': 'critical',
   'blocked-domain': 'high',
   'blocked-ip': 'high',
   'blocked-pattern': 'high',
   'data-exfil': 'high',
-  'homograph': 'medium',
+  homograph: 'medium',
   'suspicious-redirect': 'medium',
   'obfuscated-url': 'medium',
   'private-ip': 'medium',
   'suspicious-tld': 'low',
   'tracking-pixel': 'low',
   'excessive-params': 'low',
-  'custom': 'medium',
+  custom: 'medium',
 };

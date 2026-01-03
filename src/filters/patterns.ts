@@ -119,12 +119,7 @@ export const COMMON_EXCLUDE_PATTERNS = {
   ],
 
   /** Avatar/profile images (small) */
-  avatars: [
-    /avatar/i,
-    /profile.*pic/i,
-    /user.*thumb/i,
-    /\/avatars?\//i,
-  ],
+  avatars: [/avatar/i, /profile.*pic/i, /user.*thumb/i, /\/avatars?\//i],
 
   /** Thumbnail suffixes */
   thumbnails: [
@@ -167,21 +162,10 @@ export const COMMON_INCLUDE_PATTERNS = {
   ],
 
   /** Photo galleries */
-  galleries: [
-    /\/gallery\//i,
-    /\/photos?\//i,
-    /\/images?\//i,
-    /\/pictures?\//i,
-    /\/media\//i,
-  ],
+  galleries: [/\/gallery\//i, /\/photos?\//i, /\/images?\//i, /\/pictures?\//i, /\/media\//i],
 
   /** Content images */
-  content: [
-    /\/content\//i,
-    /\/articles?\//i,
-    /\/posts?\//i,
-    /\/uploads?\//i,
-  ],
+  content: [/\/content\//i, /\/articles?\//i, /\/posts?\//i, /\/uploads?\//i],
 } as const;
 
 // =============================================================================
@@ -197,7 +181,10 @@ function compilePattern(pattern: string | RegExp, caseSensitive: boolean): RegEx
       return pattern;
     }
     // Remove 'i' flag if present and caseSensitive is false
-    return new RegExp(pattern.source, pattern.flags.includes('i') ? pattern.flags : pattern.flags + 'i');
+    return new RegExp(
+      pattern.source,
+      pattern.flags.includes('i') ? pattern.flags : pattern.flags + 'i'
+    );
   }
 
   // Escape special regex characters for literal matching
@@ -215,7 +202,7 @@ function compilePattern(pattern: string | RegExp, caseSensitive: boolean): RegEx
 export function matchesPattern(
   url: string,
   pattern: string | RegExp,
-  caseSensitive: boolean = false
+  caseSensitive = false
 ): boolean {
   const regex = compilePattern(pattern, caseSensitive);
   return regex.test(url);
@@ -227,7 +214,7 @@ export function matchesPattern(
 export function matchesAnyPattern(
   url: string,
   patterns: (string | RegExp)[],
-  caseSensitive: boolean = false
+  caseSensitive = false
 ): boolean {
   return patterns.some((pattern) => matchesPattern(url, pattern, caseSensitive));
 }
@@ -392,9 +379,7 @@ export function filterByDomain<TMeta = unknown>(
   items: ExtractedMedia<TMeta>[],
   domains: string[]
 ): ExtractedMedia<TMeta>[] {
-  return items.filter((item) =>
-    domains.some((domain) => matchesDomain(item.url, domain))
-  );
+  return items.filter((item) => domains.some((domain) => matchesDomain(item.url, domain)));
 }
 
 /**
@@ -404,9 +389,7 @@ export function excludeByDomain<TMeta = unknown>(
   items: ExtractedMedia<TMeta>[],
   domains: string[]
 ): ExtractedMedia<TMeta>[] {
-  return items.filter((item) =>
-    !domains.some((domain) => matchesDomain(item.url, domain))
-  );
+  return items.filter((item) => !domains.some((domain) => matchesDomain(item.url, domain)));
 }
 
 /**

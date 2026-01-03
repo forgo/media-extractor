@@ -1,6 +1,6 @@
 {
   "name": "@forgo/media-extractor",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Zero-dependency TypeScript library for extracting, detecting, and validating media from URLs, HTML, DOM, clipboard, and drag & drop events",
   "type": "module",
   "main": "./dist/index.js",
@@ -45,9 +45,13 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"*.{json,md,yml}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"*.{json,md,yml}\"",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run test:run && npm run build"
+    "prepare": "husky",
+    "prepublishOnly": "pnpm test:run && pnpm build"
   },
   "keywords": [
     "media",
@@ -77,13 +81,30 @@
   },
   "homepage": "https://github.com/forgo/media-extractor#readme",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
+  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a",
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "jsdom": "^27.0.1",
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^25.0.3",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.2",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "tsup": "^8.0.0",
     "typescript": "^5.3.0",
-    "vitest": "^1.0.0"
+    "typescript-eslint": "^8.51.0",
+    "vitest": "^4.0.16"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

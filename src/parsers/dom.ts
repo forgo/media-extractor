@@ -72,11 +72,7 @@ const DEFAULT_OPTIONS: DomParseOptions = {
  */
 function isVisible(element: Element): boolean {
   const style = window.getComputedStyle(element);
-  return (
-    style.display !== 'none' &&
-    style.visibility !== 'hidden' &&
-    style.opacity !== '0'
-  );
+  return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
 }
 
 /**
@@ -114,7 +110,7 @@ function getBackgroundImageUrl(element: Element): string | null {
   if (!bgImage || bgImage === 'none') return null;
 
   // Extract URL from url("...")
-  const match = bgImage.match(/url\s*\(\s*['"]?([^'")\s]+)['"]?\s*\)/i);
+  const match = /url\s*\(\s*['"]?([^'")\s]+)['"]?\s*\)/i.exec(bgImage);
   return match?.[1] ?? null;
 }
 
@@ -172,10 +168,7 @@ function getHint(element: Element, dimensions?: MediaDimensions): MediaHint {
 /**
  * Parse a DOM element and its descendants for media
  */
-export function parseDom(
-  root: Element,
-  options: DomParseOptions = {}
-): DomExtractedItem[] {
+export function parseDom(root: Element, options: DomParseOptions = {}): DomExtractedItem[] {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const items: DomExtractedItem[] = [];
   const seen = new Set<string>();
@@ -404,7 +397,7 @@ export function parseDom(
   // Process iframes if requested
   if (opts.traverseIframes) {
     root.querySelectorAll('iframe').forEach((iframe) => {
-      processIframe(iframe as HTMLIFrameElement);
+      processIframe(iframe);
     });
   }
 
