@@ -96,6 +96,9 @@ jobs:
     name: CI and Publish
     needs: validate-version
     uses: ./.github/workflows/media-extractor.yml
+    permissions:
+      contents: write
+      id-token: write
     with:
       publish: true
       version: ${{ inputs.version }}
