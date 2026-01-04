@@ -18,11 +18,7 @@ export type {
   ValidationConfig,
 } from '../types';
 
-export {
-  DEFAULT_SECURITY_ASSESSMENT,
-  SEVERITY_WEIGHTS,
-  DEFAULT_THREAT_SEVERITY,
-} from '../types';
+export { DEFAULT_SECURITY_ASSESSMENT, SEVERITY_WEIGHTS, DEFAULT_THREAT_SEVERITY } from '../types';
 
 /**
  * Result of a URL validation check

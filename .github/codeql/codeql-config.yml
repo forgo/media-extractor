@@ -1,0 +1,21 @@
+name: 'Media Extractor CodeQL Config'
+
+# Use the security-and-quality query suite
+queries:
+  - uses: security-and-quality
+
+# Paths to exclude from analysis
+paths-ignore:
+  - '**/__tests__/**'
+  - '**/*.test.ts'
+  - '**/*.spec.ts'
+  - '**/test/**'
+  - '**/tests/**'
+  - '**/__mocks__/**'
+
+# Query filters to reduce false positives
+query-filters:
+  # Exclude missing anchor warnings - these are often false positives
+  # for intentional substring matching
+  - exclude:
+      id: js/regex/missing-anchor

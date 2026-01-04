@@ -56,10 +56,7 @@ const TRACKING_DOMAINS = new Set([
  * Ad network domains
  * Sources: EasyList (subset for image ads)
  */
-const AD_DOMAINS = new Set([
-  'ads.example',
-  'adserver.example',
-]);
+const AD_DOMAINS = new Set(['ads.example', 'adserver.example']);
 
 /**
  * Cryptominer domains
@@ -121,13 +118,13 @@ interface CompiledBlocklist {
   domains: Set<string>;
 
   /** Wildcard patterns (compiled to regex) */
-  wildcards: Array<{ pattern: string; regex: RegExp }>;
+  wildcards: { pattern: string; regex: RegExp }[];
 
   /** IP ranges (start, end as integers) */
-  ipRanges: Array<{ start: number; end: number; pattern: string }>;
+  ipRanges: { start: number; end: number; pattern: string }[];
 
   /** URL patterns (compiled regex) */
-  urlPatterns: Array<{ pattern: string | RegExp; regex: RegExp }>;
+  urlPatterns: { pattern: string | RegExp; regex: RegExp }[];
 }
 
 /**
@@ -250,10 +247,7 @@ export function compileBlocklist(config: BlocklistConfig): CompiledBlocklist {
 /**
  * Check if a domain matches a compiled blocklist
  */
-export function checkBlocklist(
-  url: string,
-  blocklist: CompiledBlocklist
-): BlocklistCheckResult {
+export function checkBlocklist(url: string, blocklist: CompiledBlocklist): BlocklistCheckResult {
   const domain = extractDomain(url).toLowerCase();
   const registeredDomain = extractRegisteredDomain(url).toLowerCase();
 
@@ -348,10 +342,7 @@ export function isSuspiciousTld(url: string, additionalTlds?: string[]): boolean
 /**
  * Get threat info for blocklist match
  */
-export function getBlocklistThreat(
-  result: BlocklistCheckResult,
-  url: string
-): ThreatInfo | null {
+export function getBlocklistThreat(result: BlocklistCheckResult, url: string): ThreatInfo | null {
   if (!result.blocked) return null;
 
   const listType = result.matchedLists[0];

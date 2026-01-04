@@ -198,7 +198,20 @@ export function getMediaTypeFromExtension(extension: string): MediaType {
     'tiff',
     'tif',
   ]);
-  const videoExts = new Set(['mp4', 'webm', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'ogv', '3gp', 'mpg', 'mpeg', 'm4v']);
+  const videoExts = new Set([
+    'mp4',
+    'webm',
+    'mkv',
+    'avi',
+    'mov',
+    'wmv',
+    'flv',
+    'ogv',
+    '3gp',
+    'mpg',
+    'mpeg',
+    'm4v',
+  ]);
   const audioExts = new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma', 'aiff', 'opus']);
   const docExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf']);
 
@@ -262,7 +275,10 @@ export function isDocumentMime(mimeType: string): boolean {
  */
 export function isSupportedMime(mimeType: string): boolean {
   return (
-    isImageMime(mimeType) || isVideoMime(mimeType) || isAudioMime(mimeType) || isDocumentMime(mimeType)
+    isImageMime(mimeType) ||
+    isVideoMime(mimeType) ||
+    isAudioMime(mimeType) ||
+    isDocumentMime(mimeType)
   );
 }
 
@@ -274,9 +290,9 @@ export function isSupportedMime(mimeType: string): boolean {
  * Extract MIME type from a data URL
  */
 export function getMimeFromDataUrl(dataUrl: string): string | null {
-  if (!dataUrl || !dataUrl.startsWith('data:')) return null;
+  if (!dataUrl?.startsWith('data:')) return null;
 
-  const match = dataUrl.match(/^data:([^;,]+)/);
+  const match = /^data:([^;,]+)/.exec(dataUrl);
   if (!match?.[1]) return null;
 
   return match[1].toLowerCase();
@@ -298,11 +314,11 @@ export function getMediaTypeFromDataUrl(dataUrl: string): MediaType {
 // =============================================================================
 
 /** Magic number signatures for common file types */
-const MAGIC_NUMBERS: Array<{
+const MAGIC_NUMBERS: {
   bytes: number[];
   offset?: number;
   mime: string;
-}> = [
+}[] = [
   // Images
   { bytes: [0xff, 0xd8, 0xff], mime: 'image/jpeg' },
   { bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], mime: 'image/png' },

@@ -48,7 +48,7 @@ const THREAT_TYPE_MULTIPLIERS: Partial<Record<ThreatType, number>> = {
   'blocked-domain': 1.3, // Known bad actors
   'blocked-ip': 1.3,
   'data-exfil': 1.2, // Data theft
-  'homograph': 1.1, // Phishing
+  homograph: 1.1, // Phishing
 };
 
 // =============================================================================
@@ -174,11 +174,7 @@ export class SecurityScanner {
 
     // Step 3: Threat Detection
     if (!options.skipThreats && this.config.threatDetection) {
-      const detectedThreats = detectThreats(
-        url,
-        this.config.threatDetection,
-        options.dimensions
-      );
+      const detectedThreats = detectThreats(url, this.config.threatDetection, options.dimensions);
       threats.push(...detectedThreats);
     }
 
@@ -329,10 +325,7 @@ export class SecurityScanner {
    * Add domains to blocklist
    */
   addBlockedDomains(domains: string[]): void {
-    this.config.blockedDomains = [
-      ...(this.config.blockedDomains || []),
-      ...domains,
-    ];
+    this.config.blockedDomains = [...(this.config.blockedDomains || []), ...domains];
     this.rebuildBlocklistManager();
   }
 
@@ -340,10 +333,7 @@ export class SecurityScanner {
    * Add IPs to blocklist
    */
   addBlockedIps(ips: string[]): void {
-    this.config.blockedIps = [
-      ...(this.config.blockedIps || []),
-      ...ips,
-    ];
+    this.config.blockedIps = [...(this.config.blockedIps || []), ...ips];
     this.rebuildBlocklistManager();
   }
 
@@ -351,10 +341,7 @@ export class SecurityScanner {
    * Add patterns to blocklist
    */
   addBlockedPatterns(patterns: string[]): void {
-    this.config.blockedPatterns = [
-      ...(this.config.blockedPatterns || []),
-      ...patterns,
-    ];
+    this.config.blockedPatterns = [...(this.config.blockedPatterns || []), ...patterns];
     this.rebuildBlocklistManager();
   }
 
@@ -395,10 +382,7 @@ export class SecurityScanner {
   /**
    * Determine security status from risk score and threats
    */
-  private determineStatus(
-    threats: ThreatInfo[],
-    riskScore: number
-  ): SecurityAssessment['status'] {
+  private determineStatus(threats: ThreatInfo[], riskScore: number): SecurityAssessment['status'] {
     // No threats = safe
     if (threats.length === 0) {
       return 'safe';

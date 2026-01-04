@@ -249,7 +249,9 @@ export function normalizeUrl(url: string): string {
     const sortedParams = new URLSearchParams();
     const entries = Array.from(parsed.searchParams.entries());
     entries.sort((a, b) => a[0].localeCompare(b[0]));
-    entries.forEach(([key, value]) => sortedParams.append(key, value));
+    entries.forEach(([key, value]) => {
+      sortedParams.append(key, value);
+    });
 
     const queryString = sortedParams.toString();
     if (queryString) {

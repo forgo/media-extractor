@@ -67,7 +67,7 @@ import { extractFromDataTransfer } from '@forgo/media-extractor';
 element.addEventListener('drop', (e) => {
   const result = extractFromDataTransfer(e.dataTransfer);
 
-  result.items.forEach(item => {
+  result.items.forEach((item) => {
     console.log(`Dropped: ${item.filename} (${item.mediaType})`);
   });
 });
@@ -81,13 +81,13 @@ element.addEventListener('drop', (e) => {
 
 Every extracted item is classified into one of five types:
 
-| Type | Formats | Platforms |
-|------|---------|-----------|
-| `image` | JPEG, PNG, GIF, WebP, SVG, AVIF, HEIC... | Imgur, Unsplash, CDNs |
-| `video` | MP4, WebM, MKV, AVI, MOV, HLS, DASH... | YouTube, Vimeo, Twitch, TikTok |
-| `audio` | MP3, WAV, FLAC, AAC, OGG, Opus... | Spotify, SoundCloud, Bandcamp |
-| `document` | PDF, DOCX, XLSX, PPTX, TXT... | — |
-| `unknown` | Unrecognized formats | — |
+| Type       | Formats                                  | Platforms                      |
+| ---------- | ---------------------------------------- | ------------------------------ |
+| `image`    | JPEG, PNG, GIF, WebP, SVG, AVIF, HEIC... | Imgur, Unsplash, CDNs          |
+| `video`    | MP4, WebM, MKV, AVI, MOV, HLS, DASH...   | YouTube, Vimeo, Twitch, TikTok |
+| `audio`    | MP3, WAV, FLAC, AAC, OGG, Opus...        | Spotify, SoundCloud, Bandcamp  |
+| `document` | PDF, DOCX, XLSX, PPTX, TXT...            | —                              |
+| `unknown`  | Unrecognized formats                     | —                              |
 
 ### Extraction Result
 
@@ -95,7 +95,7 @@ Every extraction returns a consistent result object:
 
 ```typescript
 interface ExtractionResult {
-  items: ExtractedMedia[];  // Extracted media items
+  items: ExtractedMedia[]; // Extracted media items
   stats: {
     urlsProcessed: number;
     itemsExtracted: number;
@@ -113,15 +113,15 @@ Each item contains full context about the extracted media:
 
 ```typescript
 interface ExtractedMedia {
-  id: string;                    // Unique identifier
-  url: string;                   // Resource URL
-  mediaType: MediaType;          // 'image' | 'video' | 'audio' | 'document' | 'unknown'
-  source: MediaSource;           // Where it came from
-  filename?: string;             // Suggested filename
-  mimeType?: string;             // MIME type
-  dimensions?: { width, height }; // For images/videos
-  security: SecurityAssessment;  // Threat analysis
-  extractedAt: Date;             // Timestamp
+  id: string; // Unique identifier
+  url: string; // Resource URL
+  mediaType: MediaType; // 'image' | 'video' | 'audio' | 'document' | 'unknown'
+  source: MediaSource; // Where it came from
+  filename?: string; // Suggested filename
+  mimeType?: string; // MIME type
+  dimensions?: { width; height }; // For images/videos
+  security: SecurityAssessment; // Threat analysis
+  extractedAt: Date; // Timestamp
 }
 ```
 
@@ -265,7 +265,7 @@ const extractor = createExtractor({
     patterns: {
       exclude: [/thumb/, /icon/, /avatar/],
     },
-    dedupe: 'smart',  // 'simple' | 'normalized' | 'smart'
+    dedupe: 'smart', // 'simple' | 'normalized' | 'smart'
   },
 });
 ```
@@ -278,14 +278,14 @@ const extractor = createExtractor({
 
 The library detects 18 types of threats:
 
-| Category | Threats |
-|----------|---------|
-| **Phishing** | Homograph attacks (Cyrillic lookalikes), suspicious TLDs |
-| **Injection** | `javascript:`, `data:`, `vbscript:` protocols |
-| **Tracking** | Tracking pixels, analytics parameters |
-| **Exfiltration** | High-entropy query strings |
-| **Obfuscation** | Excessive encoding, URL shorteners |
-| **Network** | Private IPs, blocked domains/patterns |
+| Category         | Threats                                                  |
+| ---------------- | -------------------------------------------------------- |
+| **Phishing**     | Homograph attacks (Cyrillic lookalikes), suspicious TLDs |
+| **Injection**    | `javascript:`, `data:`, `vbscript:` protocols            |
+| **Tracking**     | Tracking pixels, analytics parameters                    |
+| **Exfiltration** | High-entropy query strings                               |
+| **Obfuscation**  | Excessive encoding, URL shorteners                       |
+| **Network**      | Private IPs, blocked domains/patterns                    |
 
 ### Security Assessment
 
@@ -305,11 +305,11 @@ console.log(result.items[0].security);
 
 ### Security Presets
 
-| Preset | Description |
-|--------|-------------|
-| `strict` | Block suspicious URLs, require HTTPS, no private IPs |
-| `balanced` | Quarantine suspicious, allow HTTP, warn on threats |
-| `permissive` | Allow most URLs, only block known malicious |
+| Preset       | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| `strict`     | Block suspicious URLs, require HTTPS, no private IPs |
+| `balanced`   | Quarantine suspicious, allow HTTP, warn on threats   |
+| `permissive` | Allow most URLs, only block known malicious          |
 
 ```typescript
 import { createSecureExtractor } from '@forgo/media-extractor';
@@ -347,8 +347,8 @@ const filtered = filterByDimensions(items, {
   minHeight: 100,
   maxWidth: 4000,
   maxHeight: 4000,
-  minAspectRatio: 0.5,  // Avoid too tall
-  maxAspectRatio: 2.0,  // Avoid too wide
+  minAspectRatio: 0.5, // Avoid too tall
+  maxAspectRatio: 2.0, // Avoid too wide
 });
 ```
 
@@ -380,15 +380,15 @@ const unique = deduplicate(items, 'smart');
 
 ### Filter Presets
 
-| Preset | Description |
-|--------|-------------|
-| `none` | No filtering |
-| `basic` | Remove tiny images, deduplicate |
-| `standard` | Remove small images, filter tracking/ads, dedupe |
-| `strict` | Larger minimums, smart dedupe, safe-only |
-| `photos` | Optimized for photo galleries |
-| `videos` | Video content only |
-| `documents` | Documents only |
+| Preset      | Description                                      |
+| ----------- | ------------------------------------------------ |
+| `none`      | No filtering                                     |
+| `basic`     | Remove tiny images, deduplicate                  |
+| `standard`  | Remove small images, filter tracking/ads, dedupe |
+| `strict`    | Larger minimums, smart dedupe, safe-only         |
+| `photos`    | Optimized for photo galleries                    |
+| `videos`    | Video content only                               |
+| `documents` | Documents only                                   |
 
 ---
 
@@ -503,40 +503,40 @@ import { isAbsoluteUrl, getExtension } from '@forgo/media-extractor/utils';
 
 ### Factory Functions
 
-| Function | Description |
-|----------|-------------|
-| `createExtractor(config?)` | Create a configured extractor instance |
-| `createSecureExtractor(preset)` | Create with security preset |
-| `createFilteredExtractor(preset)` | Create with filter preset |
+| Function                          | Description                            |
+| --------------------------------- | -------------------------------------- |
+| `createExtractor(config?)`        | Create a configured extractor instance |
+| `createSecureExtractor(preset)`   | Create with security preset            |
+| `createFilteredExtractor(preset)` | Create with filter preset              |
 
 ### Quick Functions
 
-| Function | Description |
-|----------|-------------|
-| `extractFromUrl(url)` | Extract from a single URL |
-| `extractFromHtml(html, baseUrl?)` | Extract from HTML string |
-| `extractFromElement(element)` | Extract from DOM element |
-| `extractFromDataTransfer(dt)` | Extract from drag/drop |
-| `extractFromClipboard(data)` | Extract from paste |
-| `extractFromFiles(files)` | Extract from File objects |
+| Function                          | Description               |
+| --------------------------------- | ------------------------- |
+| `extractFromUrl(url)`             | Extract from a single URL |
+| `extractFromHtml(html, baseUrl?)` | Extract from HTML string  |
+| `extractFromElement(element)`     | Extract from DOM element  |
+| `extractFromDataTransfer(dt)`     | Extract from drag/drop    |
+| `extractFromClipboard(data)`      | Extract from paste        |
+| `extractFromFiles(files)`         | Extract from File objects |
 
 ### MediaExtractor Methods
 
-| Method | Description |
-|--------|-------------|
-| `fromUrl(url)` | Extract from URL |
-| `fromUrls(urls)` | Extract from multiple URLs |
-| `fromHtml(html, baseUrl?)` | Extract from HTML |
-| `fromElement(element)` | Extract from DOM element |
-| `fromDocument(doc?)` | Extract from document |
-| `fromDataTransfer(dt)` | Extract from DataTransfer |
-| `fromClipboard(data)` | Extract from clipboard |
-| `fromFiles(files)` | Extract from files |
-| `extract(source)` | Auto-detect source type |
-| `extractAll(sources)` | Batch with deduplication |
-| `configure(updates)` | Update configuration |
-| `getConfig()` | Get current config |
-| `getSecurityScanner()` | Get security scanner |
+| Method                     | Description                |
+| -------------------------- | -------------------------- |
+| `fromUrl(url)`             | Extract from URL           |
+| `fromUrls(urls)`           | Extract from multiple URLs |
+| `fromHtml(html, baseUrl?)` | Extract from HTML          |
+| `fromElement(element)`     | Extract from DOM element   |
+| `fromDocument(doc?)`       | Extract from document      |
+| `fromDataTransfer(dt)`     | Extract from DataTransfer  |
+| `fromClipboard(data)`      | Extract from clipboard     |
+| `fromFiles(files)`         | Extract from files         |
+| `extract(source)`          | Auto-detect source type    |
+| `extractAll(sources)`      | Batch with deduplication   |
+| `configure(updates)`       | Update configuration       |
+| `getConfig()`              | Get current config         |
+| `getSecurityScanner()`     | Get security scanner       |
 
 ---
 

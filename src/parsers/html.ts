@@ -115,10 +115,11 @@ export function extractBackgroundImageUrl(style: string, baseUrl?: string): stri
   if (!style) return null;
 
   // Match url() in background or background-image
-  const match = style.match(/url\s*\(\s*['"]?([^'")\s]+)['"]?\s*\)/i);
+  // Using bounded whitespace to prevent ReDoS
+  const match = /url\(\s{0,20}["']?([^"'()]+)["']?\s{0,20}\)/i.exec(style);
   if (!match?.[1]) return null;
 
-  return resolveUrl(match[1], baseUrl);
+  return resolveUrl(match[1].trim(), baseUrl);
 }
 
 /**
@@ -143,10 +144,7 @@ function getParentLinkUrl(element: Element, baseUrl?: string): string | null {
 /**
  * Parse an HTML string and extract media items
  */
-export function parseHtml(
-  html: string,
-  options: HtmlParseOptions = {}
-): HtmlExtractedItem[] {
+export function parseHtml(html: string, options: HtmlParseOptions = {}): HtmlExtractedItem[] {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const items: HtmlExtractedItem[] = [];
   const seen = new Set<string>();

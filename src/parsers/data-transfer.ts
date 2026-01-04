@@ -223,8 +223,7 @@ export function parseClipboard(
 export function hasMedia(dataTransfer: DataTransfer): boolean {
   // Check for files
   if (dataTransfer.files && dataTransfer.files.length > 0) {
-    for (let i = 0; i < dataTransfer.files.length; i++) {
-      const file = dataTransfer.files[i];
+    for (const file of dataTransfer.files) {
       if (!file) continue;
       const type = file.type;
       if (

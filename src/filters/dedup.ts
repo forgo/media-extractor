@@ -209,20 +209,14 @@ export function deduplicate<TMeta = unknown>(
   items: ExtractedMedia<TMeta>[],
   options: DedupeOptions = {}
 ): ExtractedMedia<TMeta>[] {
-  const {
-    strategy = 'normalized',
-    keepFirst = true,
-    keyGenerator,
-  } = options;
+  const { strategy = 'normalized', keepFirst = true, keyGenerator } = options;
 
   // Map to store best item for each key
   const seen = new Map<string, { item: ExtractedMedia<TMeta>; score: number; index: number }>();
 
   items.forEach((item, index) => {
     // Generate dedup key
-    const key = keyGenerator
-      ? keyGenerator(item)
-      : generateDedupeKey(item, strategy);
+    const key = keyGenerator ? keyGenerator(item) : generateDedupeKey(item, strategy);
 
     const existing = seen.get(key);
 
@@ -238,8 +232,8 @@ export function deduplicate<TMeta = unknown>(
       const newScore = scoreItem(item, options);
 
       // If scores are equal, use keepFirst preference
-      const shouldReplace = newScore > existing.score ||
-        (newScore === existing.score && !keepFirst);
+      const shouldReplace =
+        newScore > existing.score || (newScore === existing.score && !keepFirst);
 
       if (shouldReplace) {
         seen.set(key, { item, score: newScore, index });
@@ -304,10 +298,7 @@ export function countDuplicates<TMeta = unknown>(
 /**
  * Check if two items are likely the same image at different sizes
  */
-export function isSizeVariant(
-  item1: ExtractedMedia,
-  item2: ExtractedMedia
-): boolean {
+export function isSizeVariant(item1: ExtractedMedia, item2: ExtractedMedia): boolean {
   // Must be from the same domain
   if (extractDomain(item1.url) !== extractDomain(item2.url)) {
     return false;
@@ -332,12 +323,13 @@ export function isSizeVariant(
     /[-_]\d+x\d+/i,
     /[-_](s|m|l|xl|xxl)/i,
     /@\d+x/i,
-    /\?.*(?:size|width|height|w|h)=/i,
+    /\?[^#]{0,200}(?:size|width|height|w|h)=/i, // Bounded to prevent ReDoS
   ];
 
-  // Remove size indicators from both URLs
-  let url1 = item1.url;
-  let url2 = item2.url;
+  // Remove size indicators from both URLs (limit length for ReDoS protection)
+  const maxLen = 2048;
+  let url1 = item1.url.length > maxLen ? item1.url.slice(0, maxLen) : item1.url;
+  let url2 = item2.url.length > maxLen ? item2.url.slice(0, maxLen) : item2.url;
 
   for (const pattern of sizePatterns) {
     url1 = url1.replace(pattern, '');

@@ -19,12 +19,7 @@ import { parseDataTransfer, type DataTransferExtractedItem } from './parsers/dat
 import { parseDom, parseDocument, type DomExtractedItem } from './parsers/dom';
 import { parseUrl, parseUrls, type UrlExtractedItem } from './parsers/url';
 import { SecurityScanner, SECURITY_PRESETS } from './security';
-import {
-  applyFilters,
-  FILTER_PRESETS,
-  type FilterConfig,
-  deduplicate,
-} from './filters';
+import { applyFilters, FILTER_PRESETS, type FilterConfig, deduplicate } from './filters';
 import { extractFilename, extractExtension } from './utils/filename';
 import { getMimeFromExtension } from './utils/mime';
 import { isAbsoluteUrl, normalizeUrl } from './utils/url';
@@ -56,7 +51,7 @@ const DEFAULT_CONFIG: Required<ExtractorConfig> = {
 export class MediaExtractor<TMeta = unknown> {
   private config: Required<ExtractorConfig>;
   private securityScanner: SecurityScanner;
-  private extractionCount: number = 0;
+  private extractionCount = 0;
 
   constructor(config: Partial<ExtractorConfig> = {}) {
     this.config = {
@@ -234,17 +229,12 @@ export class MediaExtractor<TMeta = unknown> {
 
       const objectUrl = typeof URL !== 'undefined' ? URL.createObjectURL(file) : '';
 
-      const item = this.createMediaItem(
-        objectUrl,
-        'file',
-        mediaType,
-        {
-          file,
-          filename: file.name,
-          mimeType: file.type,
-          fileSize: file.size,
-        }
-      );
+      const item = this.createMediaItem(objectUrl, 'file', mediaType, {
+        file,
+        filename: file.name,
+        mimeType: file.type,
+        fileSize: file.size,
+      });
 
       items.push(item);
     }
@@ -273,13 +263,13 @@ export class MediaExtractor<TMeta = unknown> {
     }
 
     if (source instanceof FileList || (Array.isArray(source) && source[0] instanceof File)) {
-      return this.fromFiles(source as File[] | FileList);
+      return this.fromFiles(source);
     }
 
     return this.createResult([], Date.now());
   }
 
-  extractAll(sources: Array<string | Element | DataTransfer | File[]>): ExtractionResult<TMeta> {
+  extractAll(sources: (string | Element | DataTransfer | File[])[]): ExtractionResult<TMeta> {
     const startTime = Date.now();
     const allItems: ExtractedMedia<TMeta>[] = [];
     const stats = {
@@ -325,10 +315,7 @@ export class MediaExtractor<TMeta = unknown> {
   // Internal Processing
   // ===========================================================================
 
-  private processUrlItems(
-    items: UrlExtractedItem[],
-    source: MediaSource
-  ): ExtractedMedia<TMeta>[] {
+  private processUrlItems(items: UrlExtractedItem[], source: MediaSource): ExtractedMedia<TMeta>[] {
     const result: ExtractedMedia<TMeta>[] = [];
     const seen = new Set<string>();
 
@@ -341,9 +328,8 @@ export class MediaExtractor<TMeta = unknown> {
       seen.add(normalized);
 
       const detection = detectMediaType(item.url);
-      const mediaType = detection.confidence >= this.config.confidenceThreshold
-        ? detection.type
-        : 'unknown';
+      const mediaType =
+        detection.confidence >= this.config.confidenceThreshold ? detection.type : 'unknown';
 
       if (!this.config.mediaTypes.includes(mediaType) && mediaType !== 'unknown') {
         continue;
@@ -375,18 +361,19 @@ export class MediaExtractor<TMeta = unknown> {
       seen.add(normalized);
 
       const detection = detectMediaType(item.url);
-      const mediaType = item.mediaType || (detection.confidence >= this.config.confidenceThreshold
-        ? detection.type
-        : 'unknown');
+      const mediaType =
+        item.mediaType ||
+        (detection.confidence >= this.config.confidenceThreshold ? detection.type : 'unknown');
 
       if (!this.config.mediaTypes.includes(mediaType) && mediaType !== 'unknown') {
         continue;
       }
 
       // Convert MediaDimensions to required format
-      const dims = item.dimensions?.width != null && item.dimensions?.height != null
-        ? { width: item.dimensions.width, height: item.dimensions.height }
-        : undefined;
+      const dims =
+        item.dimensions?.width != null && item.dimensions?.height != null
+          ? { width: item.dimensions.width, height: item.dimensions.height }
+          : undefined;
 
       const media = this.createMediaItem(item.url, item.source || source, mediaType, {
         ...(dims && { dimensions: dims }),
@@ -399,10 +386,7 @@ export class MediaExtractor<TMeta = unknown> {
     return applyFilters(result, this.config.filters as FilterConfig);
   }
 
-  private processDomItems(
-    items: DomExtractedItem[],
-    source: MediaSource
-  ): ExtractedMedia<TMeta>[] {
+  private processDomItems(items: DomExtractedItem[], source: MediaSource): ExtractedMedia<TMeta>[] {
     const result: ExtractedMedia<TMeta>[] = [];
     const seen = new Set<string>();
 
@@ -415,18 +399,19 @@ export class MediaExtractor<TMeta = unknown> {
       seen.add(normalized);
 
       const detection = detectMediaType(item.url);
-      const mediaType = item.mediaType || (detection.confidence >= this.config.confidenceThreshold
-        ? detection.type
-        : 'unknown');
+      const mediaType =
+        item.mediaType ||
+        (detection.confidence >= this.config.confidenceThreshold ? detection.type : 'unknown');
 
       if (!this.config.mediaTypes.includes(mediaType) && mediaType !== 'unknown') {
         continue;
       }
 
       // Convert MediaDimensions to required format
-      const dims = item.dimensions?.width != null && item.dimensions?.height != null
-        ? { width: item.dimensions.width, height: item.dimensions.height }
-        : undefined;
+      const dims =
+        item.dimensions?.width != null && item.dimensions?.height != null
+          ? { width: item.dimensions.width, height: item.dimensions.height }
+          : undefined;
 
       const media = this.createMediaItem(item.url, item.source || source, mediaType, {
         ...(dims && { dimensions: dims }),
@@ -469,9 +454,9 @@ export class MediaExtractor<TMeta = unknown> {
       // Handle URL items
       else if (item.url && isAbsoluteUrl(item.url)) {
         const detection = detectMediaType(item.url);
-        const mediaType = item.mediaType || (detection.confidence >= this.config.confidenceThreshold
-          ? detection.type
-          : 'unknown');
+        const mediaType =
+          item.mediaType ||
+          (detection.confidence >= this.config.confidenceThreshold ? detection.type : 'unknown');
 
         if (!this.config.mediaTypes.includes(mediaType) && mediaType !== 'unknown') {
           continue;
@@ -501,12 +486,17 @@ export class MediaExtractor<TMeta = unknown> {
       confidence?: number;
     } = {}
   ): ExtractedMedia<TMeta> {
-    const security = this.securityScanner.scan(url, extras.dimensions ? {
-      dimensions: {
-        width: extras.dimensions.width,
-        height: extras.dimensions.height,
-      },
-    } : {});
+    const security = this.securityScanner.scan(
+      url,
+      extras.dimensions
+        ? {
+            dimensions: {
+              width: extras.dimensions.width,
+              height: extras.dimensions.height,
+            },
+          }
+        : {}
+    );
 
     const filename = extras.filename || extractFilename(url);
     const extension = extractExtension(url);
@@ -547,9 +537,10 @@ export class MediaExtractor<TMeta = unknown> {
     const blocked = items.filter((i) => i.security.status === 'blocked').length;
     const quarantined = items.filter((i) => i.security.status === 'quarantined').length;
 
-    const finalItems = this.config.security.mode === 'permissive'
-      ? items
-      : items.filter((i) => i.security.status !== 'blocked');
+    const finalItems =
+      this.config.security.mode === 'permissive'
+        ? items
+        : items.filter((i) => i.security.status !== 'blocked');
 
     return {
       items: finalItems,

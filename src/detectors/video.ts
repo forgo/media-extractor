@@ -17,10 +17,10 @@ void _VIDEO_EXTENSIONS; // Preserve for future use
 const STREAMING_EXTENSIONS = new Set(['m3u8', 'm3u', 'mpd']);
 
 /** Known video hosting platforms */
-const VIDEO_PLATFORMS: Array<{
+const VIDEO_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^(www\.)?youtube\.com$/i,
     patterns: [/\/watch\?/, /\/embed\//, /\/v\//],
@@ -60,22 +60,22 @@ const VIDEO_PLATFORMS: Array<{
   },
   {
     domain: /^(www\.)?twitter\.com$/i,
-    patterns: [/\/status\/.*\/video\//],
+    patterns: [/\/status\/[^/]+\/video\//],
   },
   {
     domain: /^(www\.)?x\.com$/i,
-    patterns: [/\/status\/.*\/video\//],
+    patterns: [/\/status\/[^/]+\/video\//],
   },
 ];
 
 /** Video CDN patterns */
 const VIDEO_CDN_PATTERNS = [
-  /\.cloudfront\.net\/.*\.(mp4|webm|m3u8)/i,
-  /\.akamaized\.net\/.*\.(mp4|webm|m3u8)/i,
-  /\.fastly\.net\/.*\.(mp4|webm)/i,
+  /\.cloudfront\.net\/[^?#]*\.(mp4|webm|m3u8)/i,
+  /\.akamaized\.net\/[^?#]*\.(mp4|webm|m3u8)/i,
+  /\.fastly\.net\/[^?#]*\.(mp4|webm)/i,
   /video\.twimg\.com\//i,
-  /\.cdninstagram\.com\/.*video/i,
-  /\.fbcdn\.net\/.*video/i,
+  /\.cdninstagram\.com\/[^?#]*video/i,
+  /\.fbcdn\.net\/[^?#]*video/i,
 ];
 
 /**
@@ -132,11 +132,15 @@ export function isVideoPlatformUrl(url: string): boolean {
   return false;
 }
 
+/** Maximum URL length to process (prevents ReDoS on malicious input) */
+const MAX_URL_LENGTH = 2048;
+
 /**
  * Check if URL matches video CDN patterns
  */
 export function matchesVideoCdnPattern(url: string): boolean {
-  if (!url) return false;
+  // Limit URL length to prevent ReDoS attacks
+  if (!url || url.length > MAX_URL_LENGTH) return false;
 
   for (const pattern of VIDEO_CDN_PATTERNS) {
     if (pattern.test(url)) {
@@ -163,19 +167,19 @@ export function extractVideoId(url: string): string | null {
     if (videoId) return videoId;
 
     // Embed URL: /embed/VIDEO_ID
-    const embedMatch = parsed.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/);
+    const embedMatch = /\/embed\/([a-zA-Z0-9_-]+)/.exec(parsed.pathname);
     if (embedMatch?.[1]) return embedMatch[1];
   }
 
   if (/youtu\.be$/i.test(domain)) {
     // Short URL: /VIDEO_ID
-    const match = parsed.pathname.match(/^\/([a-zA-Z0-9_-]+)/);
+    const match = /^\/([a-zA-Z0-9_-]+)/.exec(parsed.pathname);
     if (match?.[1]) return match[1];
   }
 
   // Vimeo
   if (/vimeo\.com$/i.test(domain)) {
-    const match = parsed.pathname.match(/\/(\d+)/);
+    const match = /\/(\d+)/.exec(parsed.pathname);
     if (match?.[1]) return match[1];
   }
 
@@ -233,7 +237,7 @@ export function detectVideo(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isVideoUrl(url: string, threshold: number = 0.5): boolean {
+export function isVideoUrl(url: string, threshold = 0.5): boolean {
   return detectVideo(url) >= threshold;
 }
 

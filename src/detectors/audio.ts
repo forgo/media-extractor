@@ -14,10 +14,10 @@ const _AUDIO_EXTENSIONS = new Set(getSupportedAudioExtensions());
 void _AUDIO_EXTENSIONS; // Preserve for future use
 
 /** Known audio/podcast hosting platforms */
-const AUDIO_PLATFORMS: Array<{
+const AUDIO_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^(www\.)?spotify\.com$/i,
     patterns: [/\/track\//, /\/episode\//, /\/album\//],
@@ -32,7 +32,7 @@ const AUDIO_PLATFORMS: Array<{
     domain: /^(www\.)?bandcamp\.com$/i,
   },
   {
-    domain: /^.*\.bandcamp\.com$/i,
+    domain: /^[a-z0-9-]+\.bandcamp\.com$/i,
   },
   {
     domain: /^(www\.)?mixcloud\.com$/i,
@@ -48,17 +48,24 @@ const AUDIO_PLATFORMS: Array<{
   },
 ];
 
-/** Audio CDN patterns */
+/** Audio CDN patterns - tested against full URL */
 const AUDIO_CDN_PATTERNS = [
-  /\.soundcloud\.com\/.*\.(mp3|ogg|wav)/i,
-  /audio.*\.cloudfront\.net\//i,
+  /\.soundcloud\.com\/[^?#]*\.(mp3|ogg|wav)/i,
+  /^https?:\/\/audio[^/]*\.cloudfront\.net\//i,
   /\.audio\./i,
   /\/audio\//i,
-  /podcast.*\.(mp3|m4a|ogg)/i,
+  /\/podcast[^?#]*\.(mp3|m4a|ogg)/i,
 ];
 
 /** Streaming audio patterns (podcasts, internet radio) */
-const STREAMING_AUDIO_PATTERNS = [/\.pls$/i, /\.asx$/i, /\/stream\//i, /\/listen\//i, /icecast/i, /shoutcast/i];
+const STREAMING_AUDIO_PATTERNS = [
+  /\.pls$/i,
+  /\.asx$/i,
+  /\/stream\//i,
+  /\/listen\//i,
+  /icecast/i,
+  /shoutcast/i,
+];
 
 /**
  * Check if a URL has an audio file extension
@@ -106,11 +113,15 @@ export function isAudioPlatformUrl(url: string): boolean {
   return false;
 }
 
+/** Maximum URL length to process (prevents ReDoS on malicious input) */
+const MAX_URL_LENGTH = 2048;
+
 /**
  * Check if URL matches audio CDN patterns
  */
 export function matchesAudioCdnPattern(url: string): boolean {
-  if (!url) return false;
+  // Limit URL length to prevent ReDoS attacks
+  if (!url || url.length > MAX_URL_LENGTH) return false;
 
   for (const pattern of AUDIO_CDN_PATTERNS) {
     if (pattern.test(url)) {
@@ -187,7 +198,7 @@ export function detectAudio(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isAudioUrl(url: string, threshold: number = 0.5): boolean {
+export function isAudioUrl(url: string, threshold = 0.5): boolean {
   return detectAudio(url) >= threshold;
 }
 

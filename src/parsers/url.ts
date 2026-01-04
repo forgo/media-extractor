@@ -65,10 +65,7 @@ const DEFAULT_OPTIONS: UrlParseOptions = {
 /**
  * Parse a single URL and extract media information
  */
-export function parseUrl(
-  url: string,
-  options: UrlParseOptions = {}
-): UrlExtractedItem | null {
+export function parseUrl(url: string, options: UrlParseOptions = {}): UrlExtractedItem | null {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
   if (!url) return null;
@@ -167,16 +164,12 @@ export function parseUrlWithEmbedded(
 /**
  * Parse multiple URLs
  */
-export function parseUrls(
-  urls: string[],
-  options: UrlParseOptions = {}
-): UrlExtractedItem[] {
+export function parseUrls(urls: string[], options: UrlParseOptions = {}): UrlExtractedItem[] {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const items: UrlExtractedItem[] = [];
   const seen = new Set<string>();
 
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
+  for (const url of urls) {
     if (!url) continue;
     const urlItems = parseUrlWithEmbedded(url, opts);
 
@@ -208,17 +201,18 @@ export function extractUrlsFromText(text: string): string[] {
   const urlPattern = /https?:\/\/[^\s<>"{}|\\^`[\]]+/gi;
   const matches = text.match(urlPattern) || [];
 
-  // Clean URLs (remove trailing punctuation)
-  return matches.map((url) => url.replace(/[.,;:!?)]+$/, ''));
+  // Clean URLs (remove trailing punctuation) - limit replacement to avoid ReDoS
+  return matches.map((url) => {
+    // Only strip up to 10 trailing punctuation chars to prevent ReDoS
+    const trailingMatch = /[.,;:!?)]{1,10}$/.exec(url);
+    return trailingMatch ? url.slice(0, -trailingMatch[0].length) : url;
+  });
 }
 
 /**
  * Parse URLs from plain text
  */
-export function parseTextForUrls(
-  text: string,
-  options: UrlParseOptions = {}
-): UrlExtractedItem[] {
+export function parseTextForUrls(text: string, options: UrlParseOptions = {}): UrlExtractedItem[] {
   const urls = extractUrlsFromText(text);
   return parseUrls(urls, options);
 }

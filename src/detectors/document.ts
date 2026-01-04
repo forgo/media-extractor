@@ -14,10 +14,10 @@ const _DOCUMENT_EXTENSIONS = new Set(getSupportedDocumentExtensions());
 void _DOCUMENT_EXTENSIONS; // Preserve for future use
 
 /** Document hosting/viewing platforms */
-const DOCUMENT_PLATFORMS: Array<{
+const DOCUMENT_PLATFORMS: {
   domain: RegExp;
   patterns?: RegExp[];
-}> = [
+}[] = [
   {
     domain: /^docs\.google\.com$/i,
     patterns: [/\/document\//, /\/spreadsheets\//, /\/presentation\//, /\/viewer/],
@@ -27,12 +27,12 @@ const DOCUMENT_PLATFORMS: Array<{
     patterns: [/\/file\//, /\/viewer/],
   },
   {
-    domain: /^.*\.sharepoint\.com$/i,
+    domain: /^[a-z0-9-]+\.sharepoint\.com$/i,
     patterns: [/\/_layouts\//, /\/Documents\//],
   },
   {
     domain: /^(www\.)?dropbox\.com$/i,
-    patterns: [/\/s\/.*\.(pdf|doc|docx|xls|xlsx|ppt|pptx)/i],
+    patterns: [/\/s\/[^?#]*\.(pdf|doc|docx|xls|xlsx|ppt|pptx)/i],
   },
   {
     domain: /^(www\.)?scribd\.com$/i,
@@ -57,8 +57,8 @@ const DOCUMENT_CDN_PATTERNS = [
   /\/downloads?\//i,
   /\/files?\//i,
   /\.pdf\?/i,
-  /attachment.*\.pdf/i,
-  /download.*\.pdf/i,
+  /attachment[^?#]*\.pdf/i,
+  /download[^?#]*\.pdf/i,
 ];
 
 /**
@@ -106,11 +106,15 @@ export function isDocumentPlatformUrl(url: string): boolean {
   return false;
 }
 
+/** Maximum URL length to process (prevents ReDoS on malicious input) */
+const MAX_URL_LENGTH = 2048;
+
 /**
  * Check if URL matches document CDN patterns
  */
 export function matchesDocumentCdnPattern(url: string): boolean {
-  if (!url) return false;
+  // Limit URL length to prevent ReDoS attacks
+  if (!url || url.length > MAX_URL_LENGTH) return false;
 
   for (const pattern of DOCUMENT_CDN_PATTERNS) {
     if (pattern.test(url)) {
@@ -193,7 +197,7 @@ export function detectDocument(url: string): number {
  * @param url - The URL to check
  * @param threshold - Minimum confidence threshold (default: 0.5)
  */
-export function isDocumentUrl(url: string, threshold: number = 0.5): boolean {
+export function isDocumentUrl(url: string, threshold = 0.5): boolean {
   return detectDocument(url) >= threshold;
 }
 
