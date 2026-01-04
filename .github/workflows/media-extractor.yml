@@ -17,10 +17,6 @@ on:
         required: false
         default: 'latest'
         type: string
-    secrets:
-      NPM_TOKEN:
-        required: false
-
 jobs:
   lint:
     name: Lint
@@ -139,7 +135,7 @@ jobs:
         if: ${{ inputs.version }}
         run: npm version ${{ inputs.version }} --no-git-tag-version
 
-      - name: Publish to npm
-        run: pnpm publish --access public --tag ${{ inputs.tag }} --no-git-checks
+      - name: Publish to npm (OIDC Trusted Publishing)
+        run: npm publish --access public --tag ${{ inputs.tag }} --provenance
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

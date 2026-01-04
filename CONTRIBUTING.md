@@ -1,4 +1,4 @@
-# Contributing to @forgo/media-extractor
+# Contributing to @elliott.software/media-extractor
 
 Thank you for your interest in contributing! This document provides guidelines and instructions for contributing.
 

@@ -1,5 +1,5 @@
 {
-  "name": "@forgo/media-extractor",
+  "name": "@elliott.software/media-extractor",
   "version": "0.0.0",
   "description": "Zero-dependency TypeScript library for extracting, detecting, and validating media from URLs, HTML, DOM, clipboard, and drag & drop events",
   "type": "module",
