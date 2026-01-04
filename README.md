@@ -18,13 +18,36 @@ Extract images, videos, audio, and documents from URLs, HTML, DOM elements, drag
 
 ---
 
-## Quick Start
+## Installation
 
 ```bash
 npm install @elliott.software/media-extractor
 ```
 
+```bash
+pnpm add @elliott.software/media-extractor
+```
+
+```bash
+yarn add @elliott.software/media-extractor
+```
+
+### Compatibility
+
+| Environment | Support                                                         |
+| ----------- | --------------------------------------------------------------- |
+| Node.js 20+ | URL parsing, detection, validation, security scanning           |
+| Browser     | Full support including DOM, clipboard, and drag-drop extraction |
+
+> **Note:** Functions that parse live DOM elements (`extractFromElement`, `extractFromHtml`, `parseDom`) require browser APIs. URL-based detection, validation, and security features work in both environments.
+
+---
+
+## Quick Start
+
 ### Extract from a URL
+
+When you have direct media URLs and want to validate them, detect their type, and get structured metadata:
 
 ```typescript
 import { extractFromUrl } from '@elliott.software/media-extractor';
@@ -41,7 +64,9 @@ console.log(result.items[0]);
 // }
 ```
 
-### Extract from HTML
+### Extract from HTML (Browser)
+
+When building a scraper, content importer, or need to find all media in an HTML string:
 
 ```typescript
 import { extractFromHtml } from '@elliott.software/media-extractor';
@@ -59,7 +84,9 @@ console.log(result.stats);
 // { urlsProcessed: 4, itemsExtracted: 4, extractionTimeMs: 2 }
 ```
 
-### Extract from Drag & Drop
+### Extract from Drag & Drop (Browser)
+
+When building interactive UIs where users drop images, files, or links:
 
 ```typescript
 import { extractFromDataTransfer } from '@elliott.software/media-extractor';
@@ -131,13 +158,15 @@ interface ExtractedMedia {
 
 ### From URLs
 
+Best for: processing known media URLs, validating user-submitted links, or building download queues.
+
 ```typescript
 import { extractFromUrl, createExtractor } from '@elliott.software/media-extractor';
 
 // Quick extraction
 const result = extractFromUrl('https://example.com/video.mp4');
 
-// Multiple URLs
+// Multiple URLs with deduplication
 const extractor = createExtractor();
 const result = extractor.fromUrls([
   'https://example.com/a.jpg',
@@ -146,7 +175,9 @@ const result = extractor.fromUrls([
 ]);
 ```
 
-### From HTML
+### From HTML (Browser)
+
+Best for: content importers, article scrapers, or extracting media from saved web pages.
 
 Extracts from `<img>`, `<video>`, `<audio>`, `<source>`, `<a>`, `<link>`, background images, and srcset:
 
@@ -156,7 +187,9 @@ import { extractFromHtml } from '@elliott.software/media-extractor';
 const result = extractFromHtml(html, 'https://base-url.com');
 ```
 
-### From DOM Elements
+### From DOM Elements (Browser)
+
+Best for: browser extensions, bookmarklets, or web apps that analyze the current page.
 
 ```typescript
 import { extractFromElement, createExtractor } from '@elliott.software/media-extractor';
@@ -169,7 +202,9 @@ const extractor = createExtractor();
 const result = extractor.fromDocument();
 ```
 
-### From Clipboard & Drag-Drop
+### From Clipboard & Drag-Drop (Browser)
+
+Best for: media upload interfaces, image editors, or content management tools.
 
 ```typescript
 import { extractFromClipboard, extractFromDataTransfer } from '@elliott.software/media-extractor';
@@ -185,7 +220,9 @@ element.addEventListener('drop', (e) => {
 });
 ```
 
-### From Files
+### From Files (Browser)
+
+Best for: file upload handlers, media library imports, or batch processing user uploads.
 
 ```typescript
 import { createExtractor } from '@elliott.software/media-extractor';
@@ -203,6 +240,8 @@ input.addEventListener('change', (e) => {
 ## Configuration
 
 ### Basic Configuration
+
+Tune extraction behavior to match your use case—filter by type, set quality thresholds, or limit results:
 
 ```typescript
 import { createExtractor } from '@elliott.software/media-extractor';
@@ -227,6 +266,8 @@ const extractor = createExtractor({
 
 ### Security Configuration
 
+Control how aggressively to scan and block potentially dangerous URLs:
+
 ```typescript
 import { createSecureExtractor } from '@elliott.software/media-extractor';
 
@@ -247,6 +288,8 @@ const extractor = createExtractor({
 ```
 
 ### Filter Configuration
+
+Remove unwanted media based on dimensions, URL patterns, or duplicates:
 
 ```typescript
 import { createFilteredExtractor } from '@elliott.software/media-extractor';
@@ -276,7 +319,7 @@ const extractor = createExtractor({
 
 ### Threat Detection
 
-The library detects 18 types of threats:
+The library protects against common web security threats that can appear in media URLs:
 
 | Category         | Threats                                                  |
 | ---------------- | -------------------------------------------------------- |
@@ -289,7 +332,7 @@ The library detects 18 types of threats:
 
 ### Security Assessment
 
-Every extracted item includes a security assessment:
+Every extracted item includes a security assessment so you can decide how to handle it:
 
 ```typescript
 const result = extractFromUrl('https://example.com/image.jpg');
@@ -304,6 +347,8 @@ console.log(result.items[0].security);
 ```
 
 ### Security Presets
+
+Choose a security level based on your trust requirements:
 
 | Preset       | Description                                          |
 | ------------ | ---------------------------------------------------- |
@@ -321,14 +366,16 @@ const permissive = createSecureExtractor('permissive');
 
 ### Sanitization
 
+Clean URLs and filenames before using them in your application:
+
 ```typescript
 import { sanitizeUrl, sanitizeFilename } from '@elliott.software/media-extractor/security';
 
-// Remove dangerous URL components
+// Remove tracking parameters and dangerous components
 const safeUrl = sanitizeUrl('https://example.com/path?utm_source=ads');
 // 'https://example.com/path'
 
-// Safe filesystem names
+// Create safe filesystem names from untrusted input
 const safeFilename = sanitizeFilename('../../../etc/passwd');
 // 'etc-passwd'
 ```
@@ -338,6 +385,8 @@ const safeFilename = sanitizeFilename('../../../etc/passwd');
 ## Filtering
 
 ### Dimension Filters
+
+Remove images that are too small (icons, spacers) or too large for your use case:
 
 ```typescript
 import { filterByDimensions } from '@elliott.software/media-extractor/filters';
@@ -354,6 +403,8 @@ const filtered = filterByDimensions(items, {
 
 ### Pattern Filters
 
+Include or exclude media based on URL patterns—useful for filtering out thumbnails, avatars, or tracking pixels:
+
 ```typescript
 import { filterByPatterns } from '@elliott.software/media-extractor/filters';
 
@@ -365,6 +416,8 @@ const filtered = filterByPatterns(items, {
 
 ### Deduplication
 
+Remove duplicate media, with different strategies depending on your needs:
+
 ```typescript
 import { deduplicate } from '@elliott.software/media-extractor/filters';
 
@@ -374,11 +427,13 @@ const unique = deduplicate(items, 'simple');
 // Normalized: ignores query params, protocol
 const unique = deduplicate(items, 'normalized');
 
-// Smart: keeps highest quality variant
+// Smart: detects size variants, keeps highest quality
 const unique = deduplicate(items, 'smart');
 ```
 
 ### Filter Presets
+
+Common filter configurations for specific use cases:
 
 | Preset      | Description                                      |
 | ----------- | ------------------------------------------------ |
@@ -396,22 +451,30 @@ const unique = deduplicate(items, 'smart');
 
 ### Check Media Type
 
+Determine what type of media a URL points to, without downloading it:
+
 ```typescript
-import { detectMediaType, isImage, isVideo } from '@elliott.software/media-extractor/detectors';
+import {
+  detectMediaType,
+  isImageUrl,
+  isVideoUrl,
+} from '@elliott.software/media-extractor/detectors';
 
 const detection = detectMediaType('https://youtube.com/watch?v=abc123');
 // { type: 'video', confidence: 0.95 }
 
-if (isImage(url)) {
+if (isImageUrl(url)) {
   // Handle image
 }
 
-if (isVideo(url)) {
+if (isVideoUrl(url)) {
   // Handle video
 }
 ```
 
 ### Group by Type
+
+Organize extracted media by type for separate handling:
 
 ```typescript
 import { groupByMediaType } from '@elliott.software/media-extractor/detectors';
@@ -432,7 +495,7 @@ const groups = groupByMediaType(items);
 
 ### Custom Metadata
 
-Attach custom data to extracted items:
+Attach your own data to extracted items using TypeScript generics:
 
 ```typescript
 interface MyMetadata {
@@ -453,6 +516,8 @@ result.items[0].metadata = {
 
 ### Chaining Configuration
 
+Build up configuration incrementally:
+
 ```typescript
 const extractor = createExtractor()
   .configure({ mediaTypes: ['image'] })
@@ -461,6 +526,8 @@ const extractor = createExtractor()
 ```
 
 ### Batch Extraction
+
+Process multiple sources at once with automatic deduplication across all of them:
 
 ```typescript
 const extractor = createExtractor({ deduplication: true });
@@ -478,13 +545,13 @@ const result = extractor.extractAll([
 
 ## Submodule Imports
 
-For tree-shaking, import specific modules:
+Import specific modules for smaller bundle sizes:
 
 ```typescript
 // Detectors only
-import { detectMediaType, isImage } from '@elliott.software/media-extractor/detectors';
+import { detectMediaType, isImageUrl } from '@elliott.software/media-extractor/detectors';
 
-// Parsers only
+// Parsers only (browser)
 import { parseHtml, parseDom } from '@elliott.software/media-extractor/parsers';
 
 // Security only
@@ -494,7 +561,7 @@ import { SecurityScanner, validateUrl } from '@elliott.software/media-extractor/
 import { applyFilters, deduplicate } from '@elliott.software/media-extractor/filters';
 
 // Utils only
-import { isAbsoluteUrl, getExtension } from '@elliott.software/media-extractor/utils';
+import { isAbsoluteUrl, extractExtension } from '@elliott.software/media-extractor/utils';
 ```
 
 ---
@@ -511,14 +578,14 @@ import { isAbsoluteUrl, getExtension } from '@elliott.software/media-extractor/u
 
 ### Quick Functions
 
-| Function                          | Description               |
-| --------------------------------- | ------------------------- |
-| `extractFromUrl(url)`             | Extract from a single URL |
-| `extractFromHtml(html, baseUrl?)` | Extract from HTML string  |
-| `extractFromElement(element)`     | Extract from DOM element  |
-| `extractFromDataTransfer(dt)`     | Extract from drag/drop    |
-| `extractFromClipboard(data)`      | Extract from paste        |
-| `extractFromFiles(files)`         | Extract from File objects |
+| Function                          | Environment | Description               |
+| --------------------------------- | ----------- | ------------------------- |
+| `extractFromUrl(url)`             | Any         | Extract from a single URL |
+| `extractFromHtml(html, baseUrl?)` | Browser     | Extract from HTML string  |
+| `extractFromElement(element)`     | Browser     | Extract from DOM element  |
+| `extractFromDataTransfer(dt)`     | Browser     | Extract from drag/drop    |
+| `extractFromClipboard(data)`      | Browser     | Extract from paste        |
+| `extractFromFiles(files)`         | Browser     | Extract from File objects |
 
 ### MediaExtractor Methods
 
