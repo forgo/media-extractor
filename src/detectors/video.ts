@@ -60,11 +60,11 @@ const VIDEO_PLATFORMS: {
   },
   {
     domain: /^(www\.)?twitter\.com$/i,
-    patterns: [/\/status\/.*\/video\//],
+    patterns: [/\/status\/[^/]+\/video\//],
   },
   {
     domain: /^(www\.)?x\.com$/i,
-    patterns: [/\/status\/.*\/video\//],
+    patterns: [/\/status\/[^/]+\/video\//],
   },
 ];
 

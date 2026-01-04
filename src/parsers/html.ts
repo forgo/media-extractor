@@ -115,8 +115,8 @@ export function extractBackgroundImageUrl(style: string, baseUrl?: string): stri
   if (!style) return null;
 
   // Match url() in background or background-image
-  // Using atomic groups pattern to prevent backtracking
-  const match = /url\((?:\s*)(?:["']?)([^"'()]+)(?:["']?)(?:\s*)\)/i.exec(style);
+  // Using bounded whitespace to prevent ReDoS
+  const match = /url\(\s{0,20}["']?([^"'()]+)["']?\s{0,20}\)/i.exec(style);
   if (!match?.[1]) return null;
 
   return resolveUrl(match[1].trim(), baseUrl);

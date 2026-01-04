@@ -78,13 +78,13 @@ export const COMMON_EXCLUDE_PATTERNS = {
 
   /** Social media buttons and icons */
   socialIcons: [
-    /facebook.*icon/i,
-    /twitter.*icon/i,
-    /instagram.*icon/i,
-    /linkedin.*icon/i,
-    /pinterest.*icon/i,
-    /share.*button/i,
-    /social.*icon/i,
+    /facebook[^/]*icon/i,
+    /twitter[^/]*icon/i,
+    /instagram[^/]*icon/i,
+    /linkedin[^/]*icon/i,
+    /pinterest[^/]*icon/i,
+    /share[^/]*button/i,
+    /social[^/]*icon/i,
   ],
 
   /** UI elements and icons */
@@ -106,7 +106,7 @@ export const COMMON_EXCLUDE_PATTERNS = {
     /ad\d+\./i,
     /\/ads?\//i,
     /\/advert/i,
-    /banner.*ad/i,
+    /banner[^/]*ad/i,
   ],
 
   /** Placeholder images */
@@ -114,12 +114,12 @@ export const COMMON_EXCLUDE_PATTERNS = {
     /placeholder/i,
     /blank\.(gif|png|jpg)/i,
     /empty\.(gif|png|jpg)/i,
-    /default.*avatar/i,
-    /no.*image/i,
+    /default[^/]*avatar/i,
+    /no[^/]*image/i,
   ],
 
   /** Avatar/profile images (small) */
-  avatars: [/avatar/i, /profile.*pic/i, /user.*thumb/i, /\/avatars?\//i],
+  avatars: [/avatar/i, /profile[^/]*pic/i, /user[^/]*thumb/i, /\/avatars?\//i],
 
   /** Thumbnail suffixes */
   thumbnails: [
@@ -129,8 +129,8 @@ export const COMMON_EXCLUDE_PATTERNS = {
     /-small\./i,
     /_thumbnail\./i,
     /\/thumbnails?\//i,
-    /\?.*size=s/i,
-    /\?.*w=\d{1,2}&/i, // Very small width params
+    /\?[^#]*size=s/i,
+    /\?[^#]*w=\d{1,2}&/i, // Very small width params
   ],
 } as const;
 

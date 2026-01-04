@@ -27,12 +27,12 @@ const DOCUMENT_PLATFORMS: {
     patterns: [/\/file\//, /\/viewer/],
   },
   {
-    domain: /^.*\.sharepoint\.com$/i,
+    domain: /^[a-z0-9-]+\.sharepoint\.com$/i,
     patterns: [/\/_layouts\//, /\/Documents\//],
   },
   {
     domain: /^(www\.)?dropbox\.com$/i,
-    patterns: [/\/s\/.*\.(pdf|doc|docx|xls|xlsx|ppt|pptx)/i],
+    patterns: [/\/s\/[^?#]*\.(pdf|doc|docx|xls|xlsx|ppt|pptx)/i],
   },
   {
     domain: /^(www\.)?scribd\.com$/i,

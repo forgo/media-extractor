@@ -32,7 +32,7 @@ const AUDIO_PLATFORMS: {
     domain: /^(www\.)?bandcamp\.com$/i,
   },
   {
-    domain: /^.*\.bandcamp\.com$/i,
+    domain: /^[a-z0-9-]+\.bandcamp\.com$/i,
   },
   {
     domain: /^(www\.)?mixcloud\.com$/i,
@@ -48,13 +48,13 @@ const AUDIO_PLATFORMS: {
   },
 ];
 
-/** Audio CDN patterns */
+/** Audio CDN patterns - tested against full URL */
 const AUDIO_CDN_PATTERNS = [
   /\.soundcloud\.com\/[^?#]*\.(mp3|ogg|wav)/i,
-  /audio[^/]*\.cloudfront\.net\//i,
+  /^https?:\/\/audio[^/]*\.cloudfront\.net\//i,
   /\.audio\./i,
   /\/audio\//i,
-  /podcast[^?#]*\.(mp3|m4a|ogg)/i,
+  /\/podcast[^?#]*\.(mp3|m4a|ogg)/i,
 ];
 
 /** Streaming audio patterns (podcasts, internet radio) */
