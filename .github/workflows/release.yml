@@ -103,8 +103,6 @@ jobs:
       publish: true
       version: ${{ inputs.version }}
       tag: ${{ needs.validate-version.outputs.npm_tag }}
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   create-release:
     name: Create GitHub Release
