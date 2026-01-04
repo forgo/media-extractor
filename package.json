@@ -1,6 +1,6 @@
 {
   "name": "@forgo/media-extractor",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Zero-dependency TypeScript library for extracting, detecting, and validating media from URLs, HTML, DOM, clipboard, and drag & drop events",
   "type": "module",
   "main": "./dist/index.js",
