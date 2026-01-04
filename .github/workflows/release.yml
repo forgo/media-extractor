@@ -130,9 +130,9 @@ jobs:
             ## Installation
 
             ```bash
-            pnpm add @forgo/media-extractor@${{ inputs.version }}
+            pnpm add @elliott.software/media-extractor@${{ inputs.version }}
             ```
 
             ## npm
 
-            https://www.npmjs.com/package/@forgo/media-extractor/v/${{ inputs.version }}
+            https://www.npmjs.com/package/@elliott.software/media-extractor/v/${{ inputs.version }}

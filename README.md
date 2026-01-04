@@ -1,6 +1,6 @@
-# @forgo/media-extractor
+# @elliott.software/media-extractor
 
-[![npm version](https://img.shields.io/npm/v/@forgo/media-extractor.svg)](https://www.npmjs.com/package/@forgo/media-extractor)
+[![npm version](https://img.shields.io/npm/v/@elliott.software/media-extractor.svg)](https://www.npmjs.com/package/@elliott.software/media-extractor)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Zero-dependency TypeScript library for extracting, detecting, and validating media from any source
@@ -21,13 +21,13 @@ Extract images, videos, audio, and documents from URLs, HTML, DOM elements, drag
 ## Quick Start
 
 ```bash
-npm install @forgo/media-extractor
+npm install @elliott.software/media-extractor
 ```
 
 ### Extract from a URL
 
 ```typescript
-import { extractFromUrl } from '@forgo/media-extractor';
+import { extractFromUrl } from '@elliott.software/media-extractor';
 
 const result = extractFromUrl('https://example.com/photo.jpg');
 
@@ -44,7 +44,7 @@ console.log(result.items[0]);
 ### Extract from HTML
 
 ```typescript
-import { extractFromHtml } from '@forgo/media-extractor';
+import { extractFromHtml } from '@elliott.software/media-extractor';
 
 const html = `
   <img src="hero.jpg" srcset="hero-2x.jpg 2x">
@@ -62,7 +62,7 @@ console.log(result.stats);
 ### Extract from Drag & Drop
 
 ```typescript
-import { extractFromDataTransfer } from '@forgo/media-extractor';
+import { extractFromDataTransfer } from '@elliott.software/media-extractor';
 
 element.addEventListener('drop', (e) => {
   const result = extractFromDataTransfer(e.dataTransfer);
@@ -132,7 +132,7 @@ interface ExtractedMedia {
 ### From URLs
 
 ```typescript
-import { extractFromUrl, createExtractor } from '@forgo/media-extractor';
+import { extractFromUrl, createExtractor } from '@elliott.software/media-extractor';
 
 // Quick extraction
 const result = extractFromUrl('https://example.com/video.mp4');
@@ -151,7 +151,7 @@ const result = extractor.fromUrls([
 Extracts from `<img>`, `<video>`, `<audio>`, `<source>`, `<a>`, `<link>`, background images, and srcset:
 
 ```typescript
-import { extractFromHtml } from '@forgo/media-extractor';
+import { extractFromHtml } from '@elliott.software/media-extractor';
 
 const result = extractFromHtml(html, 'https://base-url.com');
 ```
@@ -159,7 +159,7 @@ const result = extractFromHtml(html, 'https://base-url.com');
 ### From DOM Elements
 
 ```typescript
-import { extractFromElement, createExtractor } from '@forgo/media-extractor';
+import { extractFromElement, createExtractor } from '@elliott.software/media-extractor';
 
 // Single element
 const result = extractFromElement(document.querySelector('img'));
@@ -172,7 +172,7 @@ const result = extractor.fromDocument();
 ### From Clipboard & Drag-Drop
 
 ```typescript
-import { extractFromClipboard, extractFromDataTransfer } from '@forgo/media-extractor';
+import { extractFromClipboard, extractFromDataTransfer } from '@elliott.software/media-extractor';
 
 // Paste event
 document.addEventListener('paste', (e) => {
@@ -188,7 +188,7 @@ element.addEventListener('drop', (e) => {
 ### From Files
 
 ```typescript
-import { createExtractor } from '@forgo/media-extractor';
+import { createExtractor } from '@elliott.software/media-extractor';
 
 const extractor = createExtractor();
 
@@ -205,7 +205,7 @@ input.addEventListener('change', (e) => {
 ### Basic Configuration
 
 ```typescript
-import { createExtractor } from '@forgo/media-extractor';
+import { createExtractor } from '@elliott.software/media-extractor';
 
 const extractor = createExtractor({
   // Filter by media type
@@ -228,7 +228,7 @@ const extractor = createExtractor({
 ### Security Configuration
 
 ```typescript
-import { createSecureExtractor } from '@forgo/media-extractor';
+import { createSecureExtractor } from '@elliott.software/media-extractor';
 
 // Use a preset
 const extractor = createSecureExtractor('strict');
@@ -249,7 +249,7 @@ const extractor = createExtractor({
 ### Filter Configuration
 
 ```typescript
-import { createFilteredExtractor } from '@forgo/media-extractor';
+import { createFilteredExtractor } from '@elliott.software/media-extractor';
 
 // Use a preset
 const extractor = createFilteredExtractor('photos');
@@ -312,7 +312,7 @@ console.log(result.items[0].security);
 | `permissive` | Allow most URLs, only block known malicious          |
 
 ```typescript
-import { createSecureExtractor } from '@forgo/media-extractor';
+import { createSecureExtractor } from '@elliott.software/media-extractor';
 
 const strict = createSecureExtractor('strict');
 const balanced = createSecureExtractor('balanced');
@@ -322,7 +322,7 @@ const permissive = createSecureExtractor('permissive');
 ### Sanitization
 
 ```typescript
-import { sanitizeUrl, sanitizeFilename } from '@forgo/media-extractor/security';
+import { sanitizeUrl, sanitizeFilename } from '@elliott.software/media-extractor/security';
 
 // Remove dangerous URL components
 const safeUrl = sanitizeUrl('https://example.com/path?utm_source=ads');
@@ -340,7 +340,7 @@ const safeFilename = sanitizeFilename('../../../etc/passwd');
 ### Dimension Filters
 
 ```typescript
-import { filterByDimensions } from '@forgo/media-extractor/filters';
+import { filterByDimensions } from '@elliott.software/media-extractor/filters';
 
 const filtered = filterByDimensions(items, {
   minWidth: 100,
@@ -355,7 +355,7 @@ const filtered = filterByDimensions(items, {
 ### Pattern Filters
 
 ```typescript
-import { filterByPatterns } from '@forgo/media-extractor/filters';
+import { filterByPatterns } from '@elliott.software/media-extractor/filters';
 
 const filtered = filterByPatterns(items, {
   include: [/photos/, /images/],
@@ -366,7 +366,7 @@ const filtered = filterByPatterns(items, {
 ### Deduplication
 
 ```typescript
-import { deduplicate } from '@forgo/media-extractor/filters';
+import { deduplicate } from '@elliott.software/media-extractor/filters';
 
 // Simple: exact URL match
 const unique = deduplicate(items, 'simple');
@@ -397,7 +397,7 @@ const unique = deduplicate(items, 'smart');
 ### Check Media Type
 
 ```typescript
-import { detectMediaType, isImage, isVideo } from '@forgo/media-extractor/detectors';
+import { detectMediaType, isImage, isVideo } from '@elliott.software/media-extractor/detectors';
 
 const detection = detectMediaType('https://youtube.com/watch?v=abc123');
 // { type: 'video', confidence: 0.95 }
@@ -414,7 +414,7 @@ if (isVideo(url)) {
 ### Group by Type
 
 ```typescript
-import { groupByMediaType } from '@forgo/media-extractor/detectors';
+import { groupByMediaType } from '@elliott.software/media-extractor/detectors';
 
 const groups = groupByMediaType(items);
 // {
@@ -482,19 +482,19 @@ For tree-shaking, import specific modules:
 
 ```typescript
 // Detectors only
-import { detectMediaType, isImage } from '@forgo/media-extractor/detectors';
+import { detectMediaType, isImage } from '@elliott.software/media-extractor/detectors';
 
 // Parsers only
-import { parseHtml, parseDom } from '@forgo/media-extractor/parsers';
+import { parseHtml, parseDom } from '@elliott.software/media-extractor/parsers';
 
 // Security only
-import { SecurityScanner, validateUrl } from '@forgo/media-extractor/security';
+import { SecurityScanner, validateUrl } from '@elliott.software/media-extractor/security';
 
 // Filters only
-import { applyFilters, deduplicate } from '@forgo/media-extractor/filters';
+import { applyFilters, deduplicate } from '@elliott.software/media-extractor/filters';
 
 // Utils only
-import { isAbsoluteUrl, getExtension } from '@forgo/media-extractor/utils';
+import { isAbsoluteUrl, getExtension } from '@elliott.software/media-extractor/utils';
 ```
 
 ---
