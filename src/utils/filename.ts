@@ -201,14 +201,17 @@ const WINDOWS_RESERVED_NAMES = new Set([
 export function sanitizeFilename(filename: string, maxLength = 200): string {
   if (!filename || typeof filename !== 'string') return 'file';
 
-  let sanitized = filename
+  // Limit input length before regex operations to prevent ReDoS
+  const truncated = filename.slice(0, maxLength * 2);
+
+  let sanitized = truncated
     // Replace invalid characters with underscores
     .replace(INVALID_FILENAME_CHARS, '_')
     // Remove leading/trailing whitespace and dots
     .trim()
-    .replace(/^\.+|\.+$/g, '')
-    // Replace multiple underscores/dashes with single
-    .replace(/[_-]+/g, '_')
+    .replace(/^\.{1,100}|\.{1,100}$/g, '')
+    // Replace multiple underscores/dashes with single (bounded)
+    .replace(/[_-]{1,100}/g, '_')
     // Remove any remaining path separators (path traversal prevention)
     .replace(/[/\\]/g, '_');
 

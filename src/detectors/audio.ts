@@ -50,11 +50,11 @@ const AUDIO_PLATFORMS: {
 
 /** Audio CDN patterns */
 const AUDIO_CDN_PATTERNS = [
-  /\.soundcloud\.com\/.*\.(mp3|ogg|wav)/i,
-  /audio.*\.cloudfront\.net\//i,
+  /\.soundcloud\.com\/[^?#]*\.(mp3|ogg|wav)/i,
+  /audio[^/]*\.cloudfront\.net\//i,
   /\.audio\./i,
   /\/audio\//i,
-  /podcast.*\.(mp3|m4a|ogg)/i,
+  /podcast[^?#]*\.(mp3|m4a|ogg)/i,
 ];
 
 /** Streaming audio patterns (podcasts, internet radio) */

@@ -323,7 +323,7 @@ export function isSizeVariant(item1: ExtractedMedia, item2: ExtractedMedia): boo
     /[-_]\d+x\d+/i,
     /[-_](s|m|l|xl|xxl)/i,
     /@\d+x/i,
-    /\?.*(?:size|width|height|w|h)=/i,
+    /\?[^#]*(?:size|width|height|w|h)=/i,
   ];
 
   // Remove size indicators from both URLs

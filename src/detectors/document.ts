@@ -57,8 +57,8 @@ const DOCUMENT_CDN_PATTERNS = [
   /\/downloads?\//i,
   /\/files?\//i,
   /\.pdf\?/i,
-  /attachment.*\.pdf/i,
-  /download.*\.pdf/i,
+  /attachment[^?#]*\.pdf/i,
+  /download[^?#]*\.pdf/i,
 ];
 
 /**

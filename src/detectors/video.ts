@@ -70,12 +70,12 @@ const VIDEO_PLATFORMS: {
 
 /** Video CDN patterns */
 const VIDEO_CDN_PATTERNS = [
-  /\.cloudfront\.net\/.*\.(mp4|webm|m3u8)/i,
-  /\.akamaized\.net\/.*\.(mp4|webm|m3u8)/i,
-  /\.fastly\.net\/.*\.(mp4|webm)/i,
+  /\.cloudfront\.net\/[^?#]*\.(mp4|webm|m3u8)/i,
+  /\.akamaized\.net\/[^?#]*\.(mp4|webm|m3u8)/i,
+  /\.fastly\.net\/[^?#]*\.(mp4|webm)/i,
   /video\.twimg\.com\//i,
-  /\.cdninstagram\.com\/.*video/i,
-  /\.fbcdn\.net\/.*video/i,
+  /\.cdninstagram\.com\/[^?#]*video/i,
+  /\.fbcdn\.net\/[^?#]*video/i,
 ];
 
 /**

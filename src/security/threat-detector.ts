@@ -227,17 +227,18 @@ export function detectObfuscation(url: string): ThreatInfo[] {
 
 /**
  * XSS patterns to detect in URLs
+ * Using bounded patterns to prevent ReDoS
  */
 const XSS_PATTERNS = [
   /<script/i,
   /javascript:/i,
-  /on\w+\s*=/i, // onclick=, onerror=, etc.
+  /on[a-z]{1,20}\s{0,10}=/i, // onclick=, onerror=, etc. - bounded
   /data:text\/html/i,
   /vbscript:/i,
-  /expression\s*\(/i,
-  /url\s*\(\s*['"]?\s*javascript/i,
-  /<img[^>]+onerror/i,
-  /<svg[^>]+onload/i,
+  /expression\s{0,10}\(/i, // bounded whitespace
+  /url\s{0,10}\(\s{0,10}['"]?\s{0,10}javascript/i, // bounded whitespace
+  /<img[^>]{0,500}onerror/i, // bounded attribute length
+  /<svg[^>]{0,500}onload/i, // bounded attribute length
   /<iframe/i,
   /<object/i,
   /<embed/i,
@@ -297,7 +298,7 @@ export function detectTrackingPixel(url: string, dimensions?: MediaDimensions): 
     /clear\.gif/i,
     /1x1\.gif/i,
     /transparent\.gif/i,
-    /\.gif\?.*tracking/i,
+    /\.gif\?[^#]*tracking/i, // bounded to query string only
     /\/pixel\?/i,
     /\/beacon\?/i,
     /\/track\?/i,
