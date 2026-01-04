@@ -323,12 +323,13 @@ export function isSizeVariant(item1: ExtractedMedia, item2: ExtractedMedia): boo
     /[-_]\d+x\d+/i,
     /[-_](s|m|l|xl|xxl)/i,
     /@\d+x/i,
-    /\?[^#]*(?:size|width|height|w|h)=/i,
+    /\?[^#]{0,200}(?:size|width|height|w|h)=/i, // Bounded to prevent ReDoS
   ];
 
-  // Remove size indicators from both URLs
-  let url1 = item1.url;
-  let url2 = item2.url;
+  // Remove size indicators from both URLs (limit length for ReDoS protection)
+  const maxLen = 2048;
+  let url1 = item1.url.length > maxLen ? item1.url.slice(0, maxLen) : item1.url;
+  let url2 = item2.url.length > maxLen ? item2.url.slice(0, maxLen) : item2.url;
 
   for (const pattern of sizePatterns) {
     url1 = url1.replace(pattern, '');

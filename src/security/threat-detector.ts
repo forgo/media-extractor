@@ -270,6 +270,9 @@ export function detectScriptInjection(url: string): ThreatInfo | null {
 // Tracking Pixel Detection
 // =============================================================================
 
+/** Maximum URL length to process (prevents ReDoS on malicious input) */
+const MAX_URL_LENGTH = 2048;
+
 /**
  * Detect if dimensions suggest a tracking pixel
  */
@@ -288,6 +291,9 @@ export function detectTrackingPixel(url: string, dimensions?: MediaDimensions): 
     }
   }
 
+  // Limit URL length to prevent ReDoS attacks
+  if (!url || url.length > MAX_URL_LENGTH) return null;
+
   // Check URL patterns
   const trackingPatterns = [
     /pixel\.gif/i,
@@ -298,7 +304,7 @@ export function detectTrackingPixel(url: string, dimensions?: MediaDimensions): 
     /clear\.gif/i,
     /1x1\.gif/i,
     /transparent\.gif/i,
-    /\.gif\?[^#]*tracking/i, // bounded to query string only
+    /\.gif\?[^#]{0,200}tracking/i, // bounded query string length
     /\/pixel\?/i,
     /\/beacon\?/i,
     /\/track\?/i,

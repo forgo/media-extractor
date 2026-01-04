@@ -106,11 +106,15 @@ export function isDocumentPlatformUrl(url: string): boolean {
   return false;
 }
 
+/** Maximum URL length to process (prevents ReDoS on malicious input) */
+const MAX_URL_LENGTH = 2048;
+
 /**
  * Check if URL matches document CDN patterns
  */
 export function matchesDocumentCdnPattern(url: string): boolean {
-  if (!url) return false;
+  // Limit URL length to prevent ReDoS attacks
+  if (!url || url.length > MAX_URL_LENGTH) return false;
 
   for (const pattern of DOCUMENT_CDN_PATTERNS) {
     if (pattern.test(url)) {
